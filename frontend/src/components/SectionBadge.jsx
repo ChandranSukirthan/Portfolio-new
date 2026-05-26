@@ -9,7 +9,7 @@ function SectionBadge({ text }) {
         background: "rgba(255, 255, 255, 0.05)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
         borderRadius: "20px",
-        color: "#94a3b8",
+        color: "#f0cfba",
         fontSize: "0.8rem",
         fontWeight: 600,
         textTransform: "uppercase",

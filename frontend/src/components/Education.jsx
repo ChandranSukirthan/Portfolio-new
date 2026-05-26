@@ -12,13 +12,13 @@ function Education({ educationList }) {
         borderTop: "1px solid #1f2937"
       }}
     >
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1000px", margin: "0 auto"}}>
         
         {/* Header Section */}
         <div style={{ textAlign: "center", marginBottom: "60px" }}>
-          <SectionBadge text="Academic Background" />
+          <SectionBadge text="Academic Background"/>
           <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>Education</h2>
-          <p style={{ color: "#94a3b8", fontSize: "1.05rem", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
+          <p style={{ color: "#21daeb", fontSize: "1.05rem", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
             My academic qualifications and achievements
           </p>
         </div>
@@ -49,8 +49,8 @@ function Education({ educationList }) {
                     <span style={{ fontSize: "1rem", color: "#3b82f6", fontWeight: 600 }}>{edu.degree}</span>
                     {edu.specialization && (
                       <>
-                        <span style={{ color: "#475569" }}>•</span>
-                        <span style={{ fontSize: "0.95rem", color: "#94a3b8" }}>{edu.specialization}</span>
+                    
+                        <span style={{ fontSize: "1rem", color: "#3b82f6", }}>{edu.specialization}</span>
                       </>
                     )}
                   </div>
