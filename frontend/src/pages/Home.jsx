@@ -180,9 +180,8 @@ function Home() {
         fontSize: "0.85rem",
         color: "#64748b"
       }}>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
           <span>© {new Date().getFullYear()} {profile?.name || "Sukirthan Chandrakumar"}. All rights reserved.</span>
-          <span>Built with React & MongoDB CMS</span>
         </div>
       </footer>
     </div>

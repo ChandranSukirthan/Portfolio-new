@@ -204,21 +204,7 @@ function Login() {
           fontSize: "0.85rem",
           color: "#94a3b8"
         }}>
-          <span 
-            onClick={() => setIsLogin(!isLogin)}
-            style={{
-              color: "#a855f7",
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "color 0.2s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.color = "#c084fc"}
-            onMouseLeave={(e) => e.target.style.color = "#a855f7"}
-          >
-            {isLogin 
-              ? "Setup primary administrator account" 
-              : "Return to standard log in"}
-          </span>
+        
         </div>
       </div>
       <style>{`
