@@ -135,9 +135,9 @@ function Hero({ profile }) {
           <div 
             style={{
               position: "absolute",
-              width: "320px",
-              height: "320px",
-              borderRadius: "50%",
+              width: "500px",
+              height: "500px",
+              borderRadius: "60%",
               border: "1.5px solid rgba(6, 182, 212, 0.2)",
               boxShadow: "0 0 30px rgba(59, 130, 246, 0.1)",
               animation: "spin-counterclockwise 20s linear infinite"
@@ -147,8 +147,8 @@ function Hero({ profile }) {
           {/* Avatar Container with Gradient Border (Circle 2) */}
           <div 
             style={{
-              width: "260px",
-              height: "260px",
+              width: "450px",
+              height: "450px",
               borderRadius: "50%",
               padding: "8px",
               background: "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",

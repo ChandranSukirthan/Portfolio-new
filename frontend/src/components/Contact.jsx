@@ -177,7 +177,7 @@ function Contact({ contactInfo }) {
                 onChange={handleInputChange} 
                 required 
                 className="input-field" 
-                placeholder="John Doe" 
+                placeholder="Type your Name ..." 
               />
             </div>
 
@@ -189,7 +189,7 @@ function Contact({ contactInfo }) {
                 onChange={handleInputChange} 
                 required 
                 className="input-field" 
-                placeholder="john@example.com or +9477..." 
+                placeholder="+9477 or yourName@gmail.com " 
               />
             </div>
 
