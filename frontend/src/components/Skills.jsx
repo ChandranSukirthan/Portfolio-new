@@ -11,6 +11,8 @@ function Skills({ skills }) {
     DATABASE: "Database Systems",
     DEVOPS: "DevOps & Cloud",
     MOBILE: "Mobile Development",
+    MACHINE_LEARNING: "Machine Learning",
+    Generative_AI : "Generative AI",
     CORE_COMPETENCIES: "Core Competencies",
     OTHER: "Other Tech"
   };

@@ -18,6 +18,8 @@ const skillSchema = new mongoose.Schema(
         "DEVOPS",
         "MOBILE",
         "CORE_COMPETENCIES",
+        "MACHINE_LEARNING",
+        "Generative AI",
         "OTHER"
       ]
     },

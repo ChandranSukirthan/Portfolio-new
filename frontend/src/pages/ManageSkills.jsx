@@ -29,6 +29,8 @@ function ManageSkills() {
     { label: "Database Systems", value: "DATABASE" },
     { label: "DevOps & Cloud", value: "DEVOPS" },
     { label: "Mobile Development", value: "MOBILE" },
+    { label: "Machine Learning", value: "MACHINE_LEARNING" },
+    { label: "Generative AI", value: "Generative AI" },
     { label: "Core Competencies", value: "CORE_COMPETENCIES" },
     { label: "Other Tech", value: "OTHER" }
   ];
