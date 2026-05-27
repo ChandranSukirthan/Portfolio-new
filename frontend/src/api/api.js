@@ -1,13 +1,8 @@
 import axios from "axios";
 
-import axios from "axios";
-
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+  baseURL: "http://localhost:5000/api"
 });
-
-export default API;
 
 // Automatically inject JWT token into all requests
 API.interceptors.request.use(
