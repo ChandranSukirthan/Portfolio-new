@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, User, GraduationCap, Code2, 
-  Briefcase, Award, Phone, Mail, ArrowLeft 
+  Briefcase, Award, Phone, Mail, ArrowLeft, Building2
 } from "lucide-react";
 
 function AdminSidebar() {
@@ -10,14 +10,15 @@ function AdminSidebar() {
   const currentPath = location.pathname;
 
   const menuItems = [
-    { label: "Dashboard Home", path: "/admin", icon: LayoutDashboard },
-    { label: "Manage Profile", path: "/admin/profile", icon: User },
-    { label: "Manage Education", path: "/admin/education", icon: GraduationCap },
-    { label: "Manage Skills", path: "/admin/skills", icon: Code2 },
-    { label: "Manage Projects", path: "/admin/projects", icon: Briefcase },
+    { label: "Dashboard Home",    path: "/admin",              icon: LayoutDashboard },
+    { label: "Manage Profile",    path: "/admin/profile",      icon: User },
+    { label: "Manage Education",  path: "/admin/education",    icon: GraduationCap },
+    { label: "Manage Skills",     path: "/admin/skills",       icon: Code2 },
+    { label: "Manage Experience", path: "/admin/experience",   icon: Building2 },
+    { label: "Manage Projects",   path: "/admin/projects",     icon: Briefcase },
     { label: "Manage Achievements", path: "/admin/achievements", icon: Award },
     { label: "Manage Contact Info", path: "/admin/contact-info", icon: Phone },
-    { label: "View Messages", path: "/admin/messages", icon: Mail }
+    { label: "View Messages",     path: "/admin/messages",     icon: Mail }
   ];
 
   return (

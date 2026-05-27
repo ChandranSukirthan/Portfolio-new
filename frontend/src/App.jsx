@@ -9,6 +9,7 @@ import ManageProjects from "./pages/ManageProjects";
 import ManageAchievements from "./pages/ManageAchievements";
 import ManageContactInfo from "./pages/ManageContactInfo";
 import ContactMessages from "./pages/ContactMessages";
+import ManageExperience from "./pages/ManageExperience";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -87,6 +88,16 @@ function App() {
           element={
             <ProtectedRoute>
               <ManageContactInfo />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Protected Experience Editor Page */}
+        <Route 
+          path="/admin/experience" 
+          element={
+            <ProtectedRoute>
+              <ManageExperience />
             </ProtectedRoute>
           } 
         />
