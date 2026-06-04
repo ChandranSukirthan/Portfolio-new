@@ -33,4 +33,4 @@ const experienceSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Experience", experienceSchema);
+module.exports = mongoose.models.Experience || mongoose.model("Experience", experienceSchema);

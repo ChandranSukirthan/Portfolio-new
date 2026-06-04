@@ -28,4 +28,4 @@ const contactInfoSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("ContactInfo", contactInfoSchema);
+module.exports = mongoose.models.ContactInfo || mongoose.model("ContactInfo", contactInfoSchema);
