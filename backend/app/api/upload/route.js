@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { protect } from "@/lib/auth";
-import fs from "fs";
 import path from "path";
 
 export async function POST(req) {
   try {
-    // Check authorization
     await protect(req);
 
     const formData = await req.formData();
@@ -18,8 +16,6 @@ export async function POST(req) {
       );
     }
 
-    // Get buffer and original name/extension
-    const buffer = Buffer.from(await file.arrayBuffer());
     const originalName = file.name || "upload";
     const ext = path.extname(originalName).toLowerCase();
 
@@ -35,27 +31,40 @@ export async function POST(req) {
       );
     }
 
-    // Ensure public/uploads folder exists
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    // Convert file to base64
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString("base64");
+    const mimeType = file.type;
+    const dataUri = `data:${mimeType};base64,${base64}`;
+
+    // Upload to Cloudinary
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/auto/upload`;
+
+    const formPayload = new URLSearchParams();
+    formPayload.append("file", dataUri);
+    formPayload.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET);
+
+    const cloudRes = await fetch(cloudinaryUrl, {
+      method: "POST",
+      body: formPayload
+    });
+
+    const cloudData = await cloudRes.json();
+
+    if (!cloudRes.ok || cloudData.error) {
+      console.error("Cloudinary error:", cloudData.error);
+      return NextResponse.json(
+        { message: cloudData.error?.message || "Cloudinary upload failed" },
+        { status: 500 }
+      );
     }
-
-    // Generate unique name: file-timestamp-random.extension
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const filename = `file-${uniqueSuffix}${ext}`;
-    const filePath = path.join(uploadDir, filename);
-
-    // Write file to disk
-    await fs.promises.writeFile(filePath, buffer);
-
-    const fileUrl = `/uploads/${filename}`;
 
     return NextResponse.json(
       {
         success: true,
         message: "File uploaded successfully!",
-        url: fileUrl
+        url: cloudData.secure_url
       },
       { status: 200 }
     );

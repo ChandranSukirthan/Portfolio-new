@@ -4,6 +4,8 @@ export function middleware(request) {
   const origin = request.headers.get("origin");
   const allowedOrigins = [
     "http://localhost:5173", // Vite local frontend
+    "http://127.0.0.1:5173", // Vite local alternative
+    "http://localhost:5174", // Vite alternative port
     "http://localhost:3000", // React/Next local frontend
     process.env.FRONTEND_URL // Production frontend url
   ].filter(Boolean);
