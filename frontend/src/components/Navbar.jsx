@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
-import { Terminal, Shield } from "lucide-react";
+import { Terminal, Shield, Menu, X } from "lucide-react";
 
 function Navbar({ isDashboard = false }) {
   const [activeSection, setActiveSection] = useState("home");
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,6 +41,7 @@ function Navbar({ isDashboard = false }) {
   }, [isDashboard]);
 
   const scrollToSection = (id) => {
+    setIsMobileOpen(false);
     if (location.pathname !== "/") {
       navigate("/", { replace: true });
       setTimeout(() => {
@@ -50,6 +52,10 @@ function Navbar({ isDashboard = false }) {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const toggleAdminSidebar = () => {
+    document.body.classList.toggle("admin-sidebar-open");
   };
 
   // 7 standard nav links requested by user
@@ -64,16 +70,16 @@ function Navbar({ isDashboard = false }) {
   ];
 
   return (
-    <nav style={{
+    <nav className="nav-container" style={{
       position: "fixed",
       top: 0,
       left: 0,
       width: "100%",
       zIndex: 100,
       padding: scrolled ? "12px 5%" : "20px 5%",
-      background: scrolled ? "rgba(8, 7, 16, 0.75)" : "transparent",
-      backdropFilter: scrolled ? "blur(12px)" : "none",
-      WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+      background: scrolled ? "rgba(8, 7, 16, 0.85)" : "transparent",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
       borderBottom: scrolled ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid transparent",
       display: "flex",
       justifyContent: "space-between",
@@ -98,16 +104,51 @@ function Navbar({ isDashboard = false }) {
           <span>SUKIRTHAN<span style={{ color: "#06b6d4" }}>.</span></span>
         </div>
       ) : (
-        <div />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <button 
+            onClick={toggleAdminSidebar}
+            className="admin-sidebar-toggle"
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#fff",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center"
+            }}
+          >
+            <Menu size={20} />
+          </button>
+          <div 
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontWeight: 800,
+              fontSize: "1.10rem",
+              color: "#fff"
+            }}
+          >
+            <Terminal style={{ color: "#3b82f6", width: "18px", height: "18px" }} />
+            <span>PORTFOLIO <span style={{ color: "#3b82f6" }}>CMS</span></span>
+          </div>
+        </div>
+      )}
+
+      {/* Hamburger icon for public menu */}
+      {!isDashboard && (
+        <button 
+          onClick={() => setIsMobileOpen(!isMobileOpen)} 
+          className="nav-hamburger"
+          aria-label="Toggle Navigation Menu"
+        >
+          {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       )}
 
       {/* Navigation Links */}
       {!isDashboard ? (
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "24px"
-        }}>
+        <div className={`nav-links ${isMobileOpen ? "open" : ""}`}>
           {navLinks.map((link) => (
             <span
               key={link.id}
@@ -140,6 +181,7 @@ function Navbar({ isDashboard = false }) {
           {/* Secure Admin Gate */}
           <RouterLink 
             to="/admin" 
+            onClick={() => setIsMobileOpen(false)}
             style={{
               display: "flex",
               alignItems: "center",

@@ -245,3 +245,191 @@ a {
   color: #ffffff;
   border-left: 3px solid var(--primary-color);
 }
+
+/* ==========================================================================
+   Responsive Utilities & Layouts
+   ========================================================================== */
+
+/* Responsive Public Navbar */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  z-index: 101;
+  padding: 8px;
+}
+
+/* Admin Dashboard Layout */
+.admin-container {
+  min-height: 100vh;
+  background: #000000;
+  color: #f8fafc;
+  padding-left: 260px;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #080b12;
+  border-right: 1px solid #1f2937;
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 110;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-main {
+  padding: 40px;
+}
+
+/* Sidebar Toggle Button (visible on mobile only) */
+.admin-sidebar-toggle {
+  display: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive overlays and layout adaptation */
+@media (max-width: 1024px) {
+  /* Public navbar mobile styles */
+  .nav-hamburger {
+    display: block;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: rgba(8, 11, 18, 0.98);
+    border-left: 1px solid var(--border-color);
+    flex-direction: column;
+    justify-content: center;
+    gap: 30px;
+    padding: 80px 40px;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(16px);
+    z-index: 100;
+  }
+  
+  .nav-links.open {
+    right: 0;
+  }
+  
+  .nav-links a, .nav-links span {
+    font-size: 1.1rem !important;
+  }
+  
+  /* Admin sidebar mobile styles */
+  .admin-container {
+    padding-left: 0 !important;
+  }
+  
+  .admin-sidebar {
+    transform: translateX(-100%);
+  }
+  
+  body.admin-sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+  
+  .admin-sidebar-toggle {
+    display: flex;
+  }
+  
+  /* Backdrop when admin sidebar is active */
+  .admin-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 105;
+  }
+  
+  body.admin-sidebar-open .admin-sidebar-backdrop {
+    display: block;
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+  
+  .admin-main {
+    padding: 24px 16px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive grids for forms */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .form-grid-2, .form-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+/* General Layout Tweaks for Mobile Typography */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.25rem !important;
+  }
+  h2 {
+    font-size: 1.85rem !important;
+  }
+  h3 {
+    font-size: 1.15rem !important;
+  }
+  section {
+    padding: 60px 5% !important;
+  }
+}

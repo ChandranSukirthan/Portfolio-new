@@ -170,11 +170,11 @@ function ManageProjects() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", color: "#f8fafc", paddingLeft: "260px" }}>
+    <div className="admin-container">
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main style={{ padding: "40px" }}>
+      <main className="admin-main">
         {/* Title */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #1f2937", paddingBottom: "20px", marginBottom: "30px" }}>
           <div>
@@ -222,7 +222,7 @@ function ManageProjects() {
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Project Title</label>
                 <input name="projectTitle" value={formData.projectTitle} onChange={handleInputChange} required className="input-field" placeholder="e.g. AI Customer Service" />
@@ -233,7 +233,7 @@ function ManageProjects() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">GitHub Code Link</label>
                 <input name="githubLink" value={formData.githubLink} onChange={handleInputChange} className="input-field" placeholder="https://github.com/..." />
@@ -249,7 +249,7 @@ function ManageProjects() {
               <input name="technologies" value={formData.technologies} onChange={handleInputChange} className="input-field" placeholder="React, Node.js, Express, MongoDB" />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", alignItems: "center" }}>
+            <div className="form-grid-2" style={{ alignItems: "center" }}>
               <div className="form-group">
                 <label className="form-label">Project Image URL (Alternative)</label>
                 <input name="projectImage" value={formData.projectImage} onChange={handleInputChange} className="input-field" placeholder="/uploads/project-image.jpg" />

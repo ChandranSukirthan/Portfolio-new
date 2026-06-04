@@ -122,11 +122,11 @@ function ManageAchievements() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", color: "#f8fafc", paddingLeft: "260px" }}>
+    <div className="admin-container">
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main style={{ padding: "40px" }}>
+      <main className="admin-main">
         {/* Title */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #1f2937", paddingBottom: "20px", marginBottom: "30px" }}>
           <div>
@@ -174,7 +174,7 @@ function ManageAchievements() {
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Achievement Title</label>
                 <input name="title" value={formData.title} onChange={handleInputChange} required className="input-field" placeholder="e.g. AWS Certified Solutions Architect" />
@@ -185,7 +185,7 @@ function ManageAchievements() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Issued Date</label>
                 <input name="issuedDate" value={formData.issuedDate} onChange={handleInputChange} required className="input-field" placeholder="e.g. November 2025" />

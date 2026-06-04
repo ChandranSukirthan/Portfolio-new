@@ -130,15 +130,15 @@ function Hero({ profile }) {
             justifyContent: "center", 
             alignItems: "center",
             position: "relative",
-            height: "400px"
+            height: "var(--ring-size, 500px)"
           }}
         >
           {/* Animated Glowing Outer Ring (Circle 1) */}
           <div 
             style={{
               position: "absolute",
-              width: "500px",
-              height: "500px",
+              width: "var(--ring-size, 500px)",
+              height: "var(--ring-size, 500px)",
               borderRadius: "60%",
               border: "1.5px solid rgba(6, 182, 212, 0.2)",
               boxShadow: "0 0 30px rgba(59, 130, 246, 0.1)",
@@ -149,8 +149,8 @@ function Hero({ profile }) {
           {/* Avatar Container with Gradient Border (Circle 2) */}
           <div 
             style={{
-              width: "450px",
-              height: "450px",
+              width: "var(--avatar-size, 450px)",
+              height: "var(--avatar-size, 450px)",
               borderRadius: "50%",
               padding: "8px",
               background: "linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)",
@@ -179,6 +179,11 @@ function Hero({ profile }) {
 
       {/* Styled Animations */}
       <style>{`
+        :root {
+          --avatar-size: 450px;
+          --ring-size: 500px;
+        }
+
         @keyframes spin-clockwise {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
@@ -188,6 +193,13 @@ function Hero({ profile }) {
           to { transform: rotate(-360deg); }
         }
         
+        @media (max-width: 1024px) {
+          :root {
+            --avatar-size: 320px;
+            --ring-size: 360px;
+          }
+        }
+
         @media (max-width: 900px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
@@ -202,6 +214,13 @@ function Hero({ profile }) {
           }
           .hero-grid div {
             justify-content: center !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          :root {
+            --avatar-size: 240px;
+            --ring-size: 270px;
           }
         }
       `}</style>

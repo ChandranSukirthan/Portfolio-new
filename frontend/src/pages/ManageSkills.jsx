@@ -142,11 +142,11 @@ function ManageSkills() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", color: "#f8fafc", paddingLeft: "260px" }}>
+    <div className="admin-container">
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main style={{ padding: "40px" }}>
+      <main className="admin-main">
         {/* Title */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #1f2937", paddingBottom: "20px", marginBottom: "30px" }}>
           <div>
@@ -194,7 +194,7 @@ function ManageSkills() {
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Skill Name</label>
                 <input name="skillName" value={formData.skillName} onChange={handleInputChange} required className="input-field" placeholder="e.g. JavaScript" />
@@ -209,7 +209,7 @@ function ManageSkills() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Proficiency Level</label>
                 <input name="level" value={formData.level} onChange={handleInputChange} className="input-field" placeholder="e.g. Expert / Intermediate" />

@@ -104,11 +104,11 @@ function ManageContactInfo() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", color: "#f8fafc", paddingLeft: "260px" }}>
+    <div className="admin-container">
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main style={{ padding: "40px" }}>
+      <main className="admin-main">
         {/* Title */}
         <div style={{ borderBottom: "1px solid #1f2937", paddingBottom: "20px", marginBottom: "30px" }}>
           <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#fff" }}>
@@ -149,7 +149,7 @@ function ManageContactInfo() {
               gap: "24px" 
             }}
           >
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Phone Number</label>
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
@@ -182,7 +182,7 @@ function ManageContactInfo() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">GitHub Account URL</label>
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}>

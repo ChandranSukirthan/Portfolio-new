@@ -132,11 +132,11 @@ function ManageEducation() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", color: "#f8fafc", paddingLeft: "260px" }}>
+    <div className="admin-container">
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main style={{ padding: "40px" }}>
+      <main className="admin-main">
         {/* Title */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #1f2937", paddingBottom: "20px", marginBottom: "30px" }}>
           <div>
@@ -184,7 +184,7 @@ function ManageEducation() {
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">Institute Name</label>
                 <input name="instituteName" value={formData.instituteName} onChange={handleInputChange} required className="input-field" placeholder="e.g. Stanford University" />
@@ -195,7 +195,7 @@ function ManageEducation() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-3">
               <div className="form-group">
                 <label className="form-label">Specialization / Major</label>
                 <input name="specialization" value={formData.specialization} onChange={handleInputChange} className="input-field" placeholder="e.g. Computer Science" />
@@ -210,7 +210,7 @@ function ManageEducation() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", alignItems: "center" }}>
+            <div className="form-grid-2" style={{ alignItems: "center" }}>
               <div className="form-group">
                 <label className="form-label">End Year</label>
                 <input name="endYear" value={formData.endYear} onChange={handleInputChange} disabled={formData.currentStatus} className="input-field" placeholder="e.g. 2026" />

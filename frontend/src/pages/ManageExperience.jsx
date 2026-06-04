@@ -149,11 +149,11 @@ function ManageExperience() {
 
   /* ─── render ─────────────────────────────────────────────── */
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", color: "#f8fafc", paddingLeft: "260px" }}>
+    <div className="admin-container">
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main style={{ padding: "40px", paddingTop: "90px" }}>
+      <main className="admin-main" style={{ paddingTop: "90px" }}>
 
         {/* ── Page Header ── */}
         <div style={{
@@ -235,7 +235,7 @@ function ManageExperience() {
             </div>
 
             {/* Row 1: Company + Position */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-2">
               <div className="form-group">
                 <label className="form-label">
                   Company / Organisation <span style={{ color: "#ef4444" }}>*</span>
@@ -273,7 +273,7 @@ function ManageExperience() {
             </div>
 
             {/* Row 2: Location + Start Date + End Date */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
+            <div className="form-grid-3">
               <div className="form-group">
                 <label className="form-label">Location</label>
                 <div style={{ position: "relative" }}>
