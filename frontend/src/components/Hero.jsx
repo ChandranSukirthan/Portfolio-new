@@ -1,4 +1,5 @@
 import { ArrowRight, Download } from "lucide-react";
+import { getBackendBase } from "../api/api";
 
 function Hero({ profile }) {
   // Fallbacks
@@ -8,13 +9,14 @@ function Hero({ profile }) {
     "AI undergraduate specializing in Artificial Intelligence, skilled in MERN stack, machine learning, and full-stack web development. Experienced in building scalable web applications and AI-powered systems. Seeking internship opportunities to contribute to innovative projects.";
   const title = profile?.title || "AI & Full-stack Developer";
   
+  const backendBase = getBackendBase();
   const profileImage = profile?.profileImage 
-    ? (profile.profileImage.startsWith("http") ? profile.profileImage : `http://localhost:5000${profile.profileImage}`)
+    ? (profile.profileImage.startsWith("http") ? profile.profileImage : `${backendBase}${profile.profileImage}`)
     : "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=300&auto=format&fit=crop";
 
   const resumeLink = profile?.resumeLink 
-    ? (profile.resumeLink.startsWith("http") ? profile.resumeLink : `http://localhost:5000${profile.resumeLink}`)
-    : (profile?.cv ? `http://localhost:5000${profile.cv}` : "#");
+    ? (profile.resumeLink.startsWith("http") ? profile.resumeLink : `${backendBase}${profile.resumeLink}`)
+    : (profile?.cv ? `${backendBase}${profile.cv}` : "#");
 
   const scrollToContact = () => {
     const el = document.getElementById("contact");

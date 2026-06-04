@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../api/api";
+import API, { getBackendBase } from "../api/api";
 import Navbar from "../components/Navbar";
 import { 
   User, Briefcase, GraduationCap, Code, FileText, Image as ImageIcon, 
@@ -9,6 +9,7 @@ import {
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  const backendBase = getBackendBase();
   const [activeTab, setActiveTab] = useState("profile");
   
   // Toast State
@@ -574,7 +575,7 @@ function AdminDashboard() {
                     <div style={{ position: "relative" }}>
                       {profile.profileImage ? (
                         <img 
-                          src={`http://localhost:5000${profile.profileImage}`} 
+                          src={profile.profileImage.startsWith("http") ? profile.profileImage : `${backendBase}${profile.profileImage}`} 
                           alt="Avatar" 
                           style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "2px solid #a855f7" }}
                         />
@@ -610,7 +611,7 @@ function AdminDashboard() {
                           <input type="file" accept=".pdf" onChange={(e) => handleFileUpload(e, "cv")} style={{ display: "none" }} />
                         </label>
                         {profile.cv && (
-                          <a href={`http://localhost:5000${profile.cv}`} target="_blank" rel="noreferrer" className="btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>
+                          <a href={profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`} target="_blank" rel="noreferrer" className="btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>
                             <ExternalLink size={14} />
                           </a>
                         )}
@@ -981,7 +982,7 @@ function AdminDashboard() {
                 <div className="glass-panel" style={{ padding: "20px", display: "flex", alignItems: "center", gap: "20px" }}>
                   <div style={{ width: "120px", height: "70px", borderRadius: "8px", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
                     {projectForm.image ? (
-                      <img src={`http://localhost:5000${projectForm.image}`} alt="Project thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={projectForm.image.startsWith("http") ? projectForm.image : `${backendBase}${projectForm.image}`} alt="Project thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
                       <ImageIcon size={24} style={{ color: "#64748b" }} />
                     )}
@@ -1038,7 +1039,7 @@ function AdminDashboard() {
                       <div>
                         {item.image && (
                           <div style={{ width: "100%", height: "140px", borderRadius: "8px", overflow: "hidden", marginBottom: "12px" }}>
-                            <img src={`http://localhost:5000${item.image}`} alt="Project preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            <img src={item.image.startsWith("http") ? item.image : `${backendBase}${item.image}`} alt="Project preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                           </div>
                         )}
                         <span style={{ 
@@ -1141,7 +1142,7 @@ function AdminDashboard() {
                 <div className="glass-panel" style={{ padding: "20px", display: "flex", alignItems: "center", gap: "20px" }}>
                   <div style={{ width: "80px", height: "80px", borderRadius: "8px", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
                     {certForm.image ? (
-                      <img src={`http://localhost:5000${certForm.image}`} alt="Certificate logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                      <img src={certForm.image.startsWith("http") ? certForm.image : `${backendBase}${certForm.image}`} alt="Certificate logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                     ) : (
                       <ImageIcon size={24} style={{ color: "#64748b" }} />
                     )}
@@ -1170,7 +1171,7 @@ function AdminDashboard() {
                     <div key={item._id} className="glass-panel" style={{ padding: "20px", display: "flex", gap: "15px", alignItems: "center" }}>
                       <div style={{ width: "64px", height: "64px", flexShrink: 0, overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", borderRadius: "8px" }}>
                         {item.image ? (
-                          <img src={`http://localhost:5000${item.image}`} alt={item.issuer} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                          <img src={item.image.startsWith("http") ? item.image : `${backendBase}${item.image}`} alt={item.issuer} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                         ) : (
                           <ImageIcon size={20} style={{ color: "#64748b" }} />
                         )}

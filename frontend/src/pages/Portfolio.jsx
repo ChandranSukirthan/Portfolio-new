@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API from "../api/api";
+import API, { getBackendBase } from "../api/api";
 import Navbar from "../components/Navbar";
 import { 
   Github, Linkedin, Mail, Phone, Download, ExternalLink, Calendar, MapPin, 
@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 
 function Portfolio() {
+  const backendBase = getBackendBase();
   const [profile, setProfile] = useState(null);
   const [projects, setProjects] = useState([]);
   const [education, setEducation] = useState([]);
@@ -144,7 +145,7 @@ function Portfolio() {
               </a>
               {profile?.cv && (
                 <a 
-                  href={`http://localhost:5000${profile.cv}`} 
+                  href={profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="btn-secondary"
@@ -187,7 +188,7 @@ function Portfolio() {
               }} />
               {profile?.profileImage ? (
                 <img 
-                  src={`http://localhost:5000${profile.profileImage}`} 
+                  src={profile.profileImage.startsWith("http") ? profile.profileImage : `${backendBase}${profile.profileImage}`} 
                   alt={profile.name} 
                   style={{
                     width: "320px",
@@ -436,7 +437,7 @@ function Portfolio() {
                 {/* Image panel */}
                 <div style={{ width: "100%", height: "180px", position: "relative", overflow: "hidden", background: "rgba(255,255,255,0.02)" }}>
                   {item.image ? (
-                    <img src={`http://localhost:5000${item.image}`} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }} className="project-thumbnail" />
+                    <img src={item.image.startsWith("http") ? item.image : `${backendBase}${item.image}`} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }} className="project-thumbnail" />
                   ) : (
                     <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                       <Award size={48} style={{ color: "#64748b" }} />
@@ -497,7 +498,7 @@ function Portfolio() {
                   background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", borderRadius: "10px"
                 }}>
                   {item.image ? (
-                    <img src={`http://localhost:5000${item.image}`} alt={item.issuer} style={{ width: "80%", height: "80%", objectFit: "contain" }} />
+                    <img src={item.image.startsWith("http") ? item.image : `${backendBase}${item.image}`} alt={item.issuer} style={{ width: "80%", height: "80%", objectFit: "contain" }} />
                   ) : (
                     <Award size={24} style={{ color: "#60a5fa" }} />
                   )}
@@ -677,7 +678,7 @@ function Portfolio() {
 
             {activeProjectModal.image && (
               <div style={{ width: "100%", height: "240px", borderRadius: "12px", overflow: "hidden", marginBottom: "20px" }}>
-                <img src={`http://localhost:5000${activeProjectModal.image}`} alt={activeProjectModal.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={activeProjectModal.image.startsWith("http") ? activeProjectModal.image : `${backendBase}${activeProjectModal.image}`} alt={activeProjectModal.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
             )}
 

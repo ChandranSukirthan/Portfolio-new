@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API from "../api/api";
+import API, { getBackendBase } from "../api/api";
 import Navbar from "../components/Navbar";
 import { 
   User, Mail, FileText, Globe, 
@@ -272,7 +272,7 @@ function ManageProfile() {
                 <div className="glass-panel" style={{ padding: "20px", display: "flex", alignItems: "center", gap: "16px" }}>
                   <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-color)", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center", flexShrink: 0 }}>
                     {profile.profileImage ? (
-                      <img src={profile.profileImage.startsWith("http") ? profile.profileImage : `http://localhost:5000${profile.profileImage}`} alt="Avatar preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img src={profile.profileImage.startsWith("http") ? profile.profileImage : `${getBackendBase()}${profile.profileImage}`} alt="Avatar preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
                       <User size={24} style={{ color: "#64748b" }} />
                     )}

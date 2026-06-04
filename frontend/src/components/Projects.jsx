@@ -1,6 +1,7 @@
 import React from "react";
 import SectionBadge from "./SectionBadge";
 import { ExternalLink } from "lucide-react";
+import { getBackendBase } from "../api/api";
 
 // Zero-dependency SVG components to handle Lucide brand icon omission
 const GithubIcon = (props) => (
@@ -16,6 +17,8 @@ function Projects({ projects }) {
     if (!a.featured && b.featured) return 1;
     return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
   }) : [];
+
+  const backendBase = getBackendBase();
 
   return (
     <section 
@@ -42,7 +45,7 @@ function Projects({ projects }) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(330px, 1fr))", gap: "30px" }}>
           {sortedProjects.map((project) => {
             const projectImage = project.projectImage
-              ? (project.projectImage.startsWith("http") ? project.projectImage : `http://localhost:5000${project.projectImage}`)
+              ? (project.projectImage.startsWith("http") ? project.projectImage : `${backendBase}${project.projectImage}`)
               : "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop";
 
             return (

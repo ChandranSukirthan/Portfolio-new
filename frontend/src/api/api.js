@@ -4,6 +4,11 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 });
 
+export const getBackendBase = () => {
+  const apiURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  return apiURL.endsWith("/api") ? apiURL.slice(0, -4) : apiURL;
+};
+
 // Automatically inject JWT token into all requests
 API.interceptors.request.use(
   (config) => {
