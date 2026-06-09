@@ -132,19 +132,7 @@ function Navbar({ isDashboard = false }) {
             >
               <Terminal style={{ color: "#000", width: "16px", height: "16px" }} />
             </div>
-            <span>
-              SUKIRTHAN
-              <span
-                style={{
-                  background: "linear-gradient(90deg, #00f5ff, #a855f7)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                .dev
-              </span>
-            </span>
+            <span>SUKIRTHAN</span>
           </div>
         ) : (
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
