@@ -1,41 +1,57 @@
-/* Import modern premium Google Font */
+/* ============================================================
+   GOOGLE FONTS
+   ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
-/* Global Variables & Design Tokens */
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
 :root {
-  --bg-color: #000000;
-  --panel-bg: #080b12;
-  --panel-bg-hover: #0d0d0d;
-  --border-color: #1f2937;
-  --border-color-active: #3b82f6;
-  
-  /* Vibrant Accent Palette */
-  --primary-color: #3b82f6;    /* Blue accent */
-  --primary-glow: rgba(59, 130, 246, 0.15);
-  --secondary-color: #10b981;  /* Emerald accent */
-  --secondary-glow: rgba(16, 185, 129, 0.15);
-  
-  /* Text colors */
-  --text-primary: #ffffff;
-  --text-secondary: #94a3b8;   /* Light blue/gray for subtitles */
-  --text-muted: #64748b;
-  
-  /* Transitions */
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  --font-sans: 'Outfit', sans-serif;
-  --font-mono: 'Fira Code', monospace;
+  --bg-color:           #030712;
+  --bg-secondary:       #080b14;
+  --panel-bg:           rgba(12, 14, 28, 0.85);
+  --panel-bg-hover:     rgba(18, 20, 38, 0.95);
+  --border-color:       rgba(255,255,255,0.07);
+  --border-active:      rgba(0, 245, 255, 0.4);
+
+  /* Neon accents */
+  --neon-cyan:          #00f5ff;
+  --neon-purple:        #a855f7;
+  --neon-cyan-glow:     rgba(0, 245, 255, 0.18);
+  --neon-purple-glow:   rgba(168, 85, 247, 0.18);
+
+  /* Legacy blues kept for admin pages */
+  --primary-color:      #3b82f6;
+  --primary-glow:       rgba(59, 130, 246, 0.15);
+  --secondary-color:    #10b981;
+  --secondary-glow:     rgba(16, 185, 129, 0.15);
+
+  /* Text */
+  --text-primary:       #f1f5f9;
+  --text-secondary:     #94a3b8;
+  --text-muted:         #64748b;
+
+  /* Timing */
+  --ease-out-expo:      cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast:    0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal:  0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --font-sans:  'Outfit', sans-serif;
+  --font-mono:  'Fira Code', monospace;
 }
 
-/* Reset and Base Styles */
-* {
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-color) var(--bg-color);
+  scrollbar-color: var(--neon-cyan) var(--bg-color);
 }
+
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-sans);
@@ -44,25 +60,22 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.6;
+  /* hide default cursor — replaced by custom cursor */
+  cursor: none;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-color);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+/* Show cursor on touch / mobile */
+@media (hover: none) {
+  body { cursor: auto; }
 }
 
-/* Typography */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: var(--bg-color); }
+::-webkit-scrollbar-thumb  { background: var(--neon-cyan); border-radius: 10px; opacity: 0.6; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-weight: 700;
@@ -74,49 +87,177 @@ a {
   color: inherit;
   text-decoration: none;
   transition: var(--transition-fast);
+  cursor: none;
 }
 
-/* Utility Layouts */
+button, [role="button"] { cursor: none; }
+
+@media (hover: none) {
+  a, button, [role="button"] { cursor: auto; }
+}
+
+/* ============================================================
+   GRADIENT UTILITY TEXTS
+   ============================================================ */
+.gradient-text {
+  background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+#cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
+  box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan-glow);
+}
+
+#cursor-trail {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--neon-cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 8px var(--neon-cyan-glow);
+}
+
+#cursor-trail.hovered {
+  width: 48px;
+  height: 48px;
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 20px var(--neon-purple-glow), 0 0 40px var(--neon-purple-glow);
+}
+
+@media (hover: none) {
+  #cursor-dot, #cursor-trail { display: none; }
+}
+
+/* ============================================================
+   GLASS PANELS
+   ============================================================ */
 .glass-panel {
   background: var(--panel-bg);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  transition: var(--transition-normal);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal),
+              transform var(--transition-normal);
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+  border-color: rgba(0, 245, 255, 0.15);
+  box-shadow: 0 8px 32px -8px rgba(0,0,0,0.7), 0 0 24px rgba(0,245,255,0.05);
 }
 
-/* Floating Blobs */
+/* ============================================================
+   SECTION REVEAL (GSAP / IntersectionObserver driven)
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.75s var(--ease-out-expo), transform 0.75s var(--ease-out-expo);
+  /* Prevent flash of invisible on initial load */
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* When GSAP takes over, unset the transition to avoid conflicts */
+.reveal.gsap-driven {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* ============================================================
+   BLOB DECORATIONS
+   ============================================================ */
 .tech-blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0.35;
+  animation: blob-drift 12s ease-in-out infinite alternate;
 }
 
 .blob-purple {
-  width: 350px;
-  height: 350px;
-  background: rgba(59, 130, 246, 0.2);
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%);
 }
 
 .blob-cyan {
-  width: 400px;
-  height: 400px;
-  background: rgba(16, 185, 129, 0.15);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
 }
 
-/* Timelines for Experience/Education */
+@keyframes blob-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(30px, -20px) scale(1.08); }
+  100% { transform: translate(-15px, 25px) scale(0.95); }
+}
+
+/* ============================================================
+   SHIMMER
+   ============================================================ */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--neon-cyan) 0%,
+    var(--neon-purple) 25%,
+    #ffffff 50%,
+    var(--neon-cyan) 75%,
+    var(--neon-purple) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Float up animation for any element */
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.float-up { animation: float-up 0.7s var(--ease-out-expo) forwards; }
+
+/* ============================================================
+   TIMELINE (Experience / Education)
+   ============================================================ */
 .timeline-container {
   position: relative;
   margin: 2rem 0;
   padding-left: 2.5rem;
-  border-left: 2px solid rgba(139, 92, 246, 0.3);
+  border-left: 2px solid rgba(168, 85, 247, 0.25);
 }
 
 .timeline-item {
@@ -132,141 +273,291 @@ a {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #8b5cf6;
-  border: 3px solid #080710;
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+  background: var(--neon-purple);
+  border: 3px solid var(--bg-color);
+  box-shadow: 0 0 12px var(--neon-purple-glow);
   transition: var(--transition-fast);
   z-index: 1;
 }
 
 .timeline-item:hover::before {
-  background: #a78bfa;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+  background: var(--neon-cyan);
+  box-shadow: 0 0 20px var(--neon-cyan-glow);
   transform: scale(1.3);
 }
 
-/* Premium Buttons - White background with black text for Primary */
-.btn-primary {
-  background: #ffffff;
-  color: #000000;
-  border: 1px solid #ffffff;
-  padding: 0.8rem 1.8rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
+/* ============================================================
+   3D FLIP CARDS (Skills)
+   ============================================================ */
+.flip-card {
+  perspective: 1200px;
+  min-height: 230px;
+  cursor: default;
+  /* GPU layer promotion for smooth flip */
+  will-change: transform;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.flip-card-front {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  justify-content: center;
   align-items: center;
-  gap: 8px;
-  transition: var(--transition-fast);
+  text-align: center;
+  gap: 16px;
 }
 
-.btn-primary:hover {
-  background: #f1f5f9;
-  border-color: #f1f5f9;
-  transform: translateY(-2px);
+.flip-card-back {
+  background: linear-gradient(135deg, rgba(0,245,255,0.06) 0%, rgba(168,85,247,0.06) 100%);
+  border: 1px solid rgba(0,245,255,0.2);
+  backdrop-filter: blur(12px);
+  transform: rotateY(180deg);
+  gap: 10px;
+  overflow-y: auto;
 }
 
-.btn-primary:active {
+/* Progress bar */
+.skill-bar-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+  width: 0%;
+  transition: width 1s var(--ease-out-expo);
+  box-shadow: 0 0 8px var(--neon-cyan-glow);
+}
+
+/* ============================================================
+   PROJECT CARDS — TILT + GLOW
+   ============================================================ */
+.project-card-wrap {
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s;
+  position: relative;
+}
+
+.project-glow-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(0,245,255,0.12) 0%,
+    rgba(168,85,247,0.08) 60%,
+    transparent 100%);
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.project-card-wrap:hover .project-glow-overlay {
+  opacity: 1;
+}
+
+.project-actions {
+  display: flex;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  width: 100%;
+}
+
+.project-card-wrap:hover .project-actions {
+  opacity: 1;
   transform: translateY(0);
 }
 
+/* ============================================================
+   FLOATING LABEL INPUTS (Contact)
+   ============================================================ */
+.float-group {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.float-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 22px 16px 8px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  resize: vertical;
+}
+
+.float-input:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.1);
+  background: rgba(0,245,255,0.03);
+}
+
+.float-label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.22s var(--ease-out-expo);
+  background: transparent;
+}
+
+.float-input:focus + .float-label,
+.float-input:not(:placeholder-shown) + .float-label,
+.float-input.has-value + .float-label {
+  top: 10px;
+  transform: translateY(0);
+  font-size: 0.72rem;
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+/* Textarea specific label positioning */
+.float-group.textarea-group .float-label {
+  top: 18px;
+  transform: none;
+}
+
+.float-group.textarea-group .float-input:focus + .float-label,
+.float-group.textarea-group .float-input.has-value + .float-label {
+  top: 8px;
+  font-size: 0.72rem;
+  color: var(--neon-cyan);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%);
+  color: #000;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  border-radius: 10px;
+  cursor: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+  font-size: 0.95rem;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,245,255,0.35), 0 0 40px rgba(168,85,247,0.2);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+/* Ripple */
+.btn-primary .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transform: scale(0);
+  animation: ripple-anim 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple-anim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* Pulse glow on submit button */
+.btn-submit-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0,245,255,0.3), 0 0 20px rgba(168,85,247,0.15); }
+  50%       { box-shadow: 0 0 20px rgba(0,245,255,0.6), 0 0 40px rgba(168,85,247,0.35); }
+}
+
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   padding: 0.8rem 1.8rem;
   font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
+  font-family: var(--font-sans);
+  border-radius: 10px;
+  cursor: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   transition: var(--transition-fast);
+  font-size: 0.95rem;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0,245,255,0.06);
+  border-color: rgba(0,245,255,0.3);
   transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,245,255,0.1);
 }
 
-/* Forms */
-.form-group {
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.input-field {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  transition: var(--transition-fast);
-  outline: none;
-}
-
-.input-field:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-glow);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-/* Dashboard Side Panel Navigation */
-.dash-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.8rem 1.2rem;
-  border-radius: 8px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.dash-nav-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-primary);
-}
-
-.dash-nav-item.active {
-  background: #1e293b;
-  color: #ffffff;
-  border-left: 3px solid var(--primary-color);
-}
-
-/* ==========================================================================
-   Responsive Utilities & Layouts
-   ========================================================================== */
-
-/* Responsive Public Navbar */
+/* ============================================================
+   NAV
+   ============================================================ */
 .nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 100%;
-  z-index: 100;
-  transition: all 0.3s ease;
+  z-index: 1000;
+  transition: all 0.35s ease;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 
 .nav-hamburger {
@@ -274,162 +565,458 @@ a {
   background: transparent;
   border: none;
   color: var(--text-primary);
-  cursor: pointer;
-  z-index: 101;
+  cursor: none;
+  z-index: 1001;
   padding: 8px;
 }
 
-/* Admin Dashboard Layout */
-.admin-container {
-  min-height: 100vh;
-  background: #000000;
-  color: #f8fafc;
-  padding-left: 260px;
-  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.admin-sidebar {
-  width: 260px;
-  min-height: 100vh;
-  background: #080b12;
-  border-right: 1px solid #1f2937;
-  padding: 30px 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 110;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.admin-main {
-  padding: 40px;
-}
-
-/* Sidebar Toggle Button (visible on mobile only) */
-.admin-sidebar-toggle {
-  display: none;
-  background: rgba(255, 255, 255, 0.05);
+/* ============================================================
+   FILTER TAGS
+   ============================================================ */
+.filter-tag {
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  border-radius: 6px;
-  padding: 8px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
+  color: var(--text-secondary);
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: none;
+  transition: var(--transition-fast);
+  font-family: var(--font-sans);
 }
 
-/* Responsive overlays and layout adaptation */
+.filter-tag:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.filter-tag.active {
+  background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(168,85,247,0.15));
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(0,245,255,0.15);
+}
+
+/* ============================================================
+   ADMIN / DASHBOARD STYLES (unchanged)
+   ============================================================ */
+.dash-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0.8rem 1.2rem; border-radius: 8px;
+  color: var(--text-secondary); font-weight: 500;
+  cursor: pointer; transition: var(--transition-fast);
+}
+.dash-nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+.dash-nav-item.active { background: #1e293b; color: #fff; border-left: 3px solid var(--primary-color); }
+
+.admin-container { min-height: 100vh; background: #000; color: #f8fafc; padding-left: 260px; transition: padding-left 0.3s cubic-bezier(0.4,0,0.2,1); }
+.admin-sidebar { width: 260px; min-height: 100vh; background: #080b12; border-right: 1px solid #1f2937; padding: 30px 15px; display: flex; flex-direction: column; gap: 40px; position: fixed; left: 0; top: 0; z-index: 110; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.admin-main { padding: 40px; }
+.admin-sidebar-toggle { display: none; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 8px; cursor: pointer; align-items: center; justify-content: center; }
+
+/* ============================================================
+   FORMS (admin)
+   ============================================================ */
+.form-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.form-label { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
+.input-field { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.95rem; transition: var(--transition-fast); outline: none; width: 100%; }
+.input-field:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px var(--primary-glow); background: rgba(255,255,255,0.04); }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 5000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: #0d0f1e;
+  border: 1px solid rgba(0,245,255,0.15);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 40px rgba(0,245,255,0.08);
+  animation: scaleIn 0.25s var(--ease-out-expo);
+}
+
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes spin    { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   SECTION BADGE
+   ============================================================ */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(0,245,255,0.06);
+  border: 1px solid rgba(0,245,255,0.2);
+  border-radius: 20px;
+  color: var(--neon-cyan);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 1024px) {
-  /* Public navbar mobile styles */
-  .nav-hamburger {
-    display: block;
-  }
-  
+  .nav-hamburger { display: block; }
+
   .nav-links {
     position: fixed;
-    top: 0;
-    right: -100%;
-    width: 280px;
-    height: 100vh;
-    background: rgba(8, 11, 18, 0.98);
+    top: 0; right: -100%;
+    width: 280px; height: 100vh;
+    background: rgba(8,11,18,0.98);
     border-left: 1px solid var(--border-color);
     flex-direction: column;
     justify-content: center;
     gap: 30px;
     padding: 80px 40px;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(16px);
-    z-index: 100;
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
   }
-  
-  .nav-links.open {
-    right: 0;
-  }
-  
-  .nav-links a, .nav-links span {
-    font-size: 1.1rem !important;
-  }
-  
-  /* Admin sidebar mobile styles */
-  .admin-container {
-    padding-left: 0 !important;
-  }
-  
-  .admin-sidebar {
-    transform: translateX(-100%);
-  }
-  
-  body.admin-sidebar-open .admin-sidebar {
-    transform: translateX(0);
-  }
-  
-  .admin-sidebar-toggle {
-    display: flex;
-  }
-  
-  /* Backdrop when admin sidebar is active */
+
+  .nav-links.open { right: 0; }
+  .nav-links a, .nav-links span { font-size: 1.1rem !important; }
+
+  .admin-container   { padding-left: 0 !important; }
+  .admin-sidebar     { transform: translateX(-100%); }
+  body.admin-sidebar-open .admin-sidebar { transform: translateX(0); }
+  .admin-sidebar-toggle { display: flex; }
+
   .admin-sidebar-backdrop {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 105;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); z-index: 105;
   }
-  
   body.admin-sidebar-open .admin-sidebar-backdrop {
-    display: block;
-    animation: fadeIn 0.2s ease-out forwards;
+    display: block; animation: fadeIn 0.2s ease-out forwards;
   }
-  
-  .admin-main {
-    padding: 24px 16px;
-  }
-}
+  .admin-main { padding: 24px 16px; }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Responsive grids for forms */
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.form-grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+  .flip-card { min-height: 200px; }
 }
 
 @media (max-width: 768px) {
-  .form-grid-2, .form-grid-3 {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-  }
+  h1 { font-size: 2.25rem !important; }
+  h2 { font-size: 1.85rem !important; }
+  h3 { font-size: 1.15rem !important; }
+  section { padding: 60px 5% !important; }
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .contact-grid { grid-template-columns: 1fr !important; }
+
+  /* On mobile, disable perspective-heavy flip cards */
+  .flip-card { perspective: none; }
+  .flip-card-inner { transition: none; }
+  .flip-card:hover .flip-card-inner { transform: none; }
+  .flip-card-back { display: none; }
+  .flip-card-front { position: static; }
 }
 
-/* General Layout Tweaks for Mobile Typography */
+/* ============================================================
+   SOLAR SYSTEM PORTFOLIO — ADDED STYLES
+   ============================================================ */
+
+/* ── Planet floating labels ─────────────────────────────────── */
+.planet-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 3px 9px;
+  background: rgba(6, 10, 24, 0.72);
+  border: 1px solid rgba(0, 245, 255, 0.18);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  transition: opacity 0.25s ease;
+  will-change: transform;
+  text-shadow: 0 0 8px rgba(0, 245, 255, 0.5);
+}
+
+/* ── Hover tooltip ──────────────────────────────────────────── */
+.planet-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(6, 8, 20, 0.92);
+  border: 1px solid rgba(0, 245, 255, 0.35);
+  color: var(--neon-cyan);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 16px rgba(0, 245, 255, 0.2);
+  z-index: 50;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+/* ── Section panel overlay ──────────────────────────────────── */
+.section-panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(3, 7, 18, 0.97);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-cyan) var(--bg-color);
+}
+
+.section-panel-overlay.hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+}
+
+.section-panel-overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+/* Section content wrapper — adds top padding so back button doesn't overlap */
+.section-panel-content {
+  padding-top: 72px;
+}
+
+/* ── Back button ────────────────────────────────────────────── */
+.solar-back-btn {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 14px 22px;
+  width: 100%;
+  background: rgba(3, 7, 18, 0.92);
+  border: none;
+  border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+  color: var(--neon-cyan);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.solar-back-btn:hover {
+  background: rgba(0, 245, 255, 0.06);
+  color: #fff;
+}
+
+.solar-back-btn svg {
+  transition: transform var(--transition-fast);
+}
+
+.solar-back-btn:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ── HUD overlay (visible when solar system is shown) ───────── */
+.solar-hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 28px;
+}
+
+.solar-hud-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.solar-hud-hidden {
+  opacity: 0;
+  transform: translateY(-16px);
+  pointer-events: none;
+}
+
+.solar-hud-title {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 30px rgba(0, 245, 255, 0.4), 0 0 60px rgba(168, 85, 247, 0.25);
+}
+
+.solar-hud-hint {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: rgba(148, 163, 184, 0.75);
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+
+/* ── Planet legend row ──────────────────────────────────────── */
+.solar-planet-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 8px 20px;
+  background: rgba(6, 8, 22, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.solar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(203, 213, 225, 0.75);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.solar-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Float animation for hero ───────────────────────────────── */
+.animate-float {
+  animation: float-hero 4s ease-in-out infinite;
+}
+
+@keyframes float-hero {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+/* purple-cyan-text used in hero */
+.purple-cyan-text {
+  background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Clickable legend buttons ────────────────────────────────── */
+.solar-legend-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  color: rgba(203, 213, 225, 0.75);
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 4px 10px;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.solar-legend-btn:hover {
+  background: rgba(0, 245, 255, 0.08);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.15);
+}
+
+.solar-legend-btn:hover .solar-legend-dot {
+  transform: scale(1.35);
+}
+
+.solar-legend-dot {
+  transition: transform 0.2s ease;
+}
+
+/* ── Admin login button (bottom-right) ───────────────────────── */
+.solar-admin-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 150;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px 9px 14px;
+  background: rgba(6, 8, 22, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+  color: rgba(148, 163, 184, 0.6);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease,
+              color 0.25s ease, box-shadow 0.25s ease;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.solar-admin-btn:hover {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: var(--neon-purple);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.solar-admin-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.solar-admin-btn:hover svg {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+/* ── Responsive solar HUD ───────────────────────────────────── */
 @media (max-width: 768px) {
-  h1 {
-    font-size: 2.25rem !important;
-  }
-  h2 {
-    font-size: 1.85rem !important;
-  }
-  h3 {
-    font-size: 1.15rem !important;
-  }
-  section {
-    padding: 60px 5% !important;
-  }
+  .solar-hud-title { font-size: 1.4rem; }
+  .solar-planet-legend { gap: 10px; padding: 6px 14px; }
+  .solar-legend-item { font-size: 0.62rem; }
+  .solar-back-btn { font-size: 0.82rem; padding: 12px 16px; }
+  .section-panel-content { padding-top: 60px; }
+  .solar-admin-btn { bottom: 16px; right: 16px; padding: 8px 14px 8px 12px; font-size: 0.7rem; }
 }

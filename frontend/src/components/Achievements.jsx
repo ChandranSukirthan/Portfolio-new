@@ -8,9 +8,9 @@ function Achievements({ achievements }) {
       id="achievements" 
       style={{
         padding: "100px 5%",
-        background: "#000000",
+        background: "transparent",
         position: "relative",
-        borderTop: "1px solid #1f2937"
+        borderTop: "1px solid rgba(255, 255, 255, 0.08)"
       }}
     >
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
