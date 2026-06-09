@@ -6,26 +6,6 @@ import { ChevronDown } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LEVEL_PCT = {
-  Beginner: 20,
-  Elementary: 38,
-  Intermediate: 58,
-  "Upper-Intermediate": 72,
-  Advanced: 85,
-  Expert: 93,
-  Master: 100,
-};
-
-const LEVEL_COLOR = {
-  Beginner: "#64748b",
-  Elementary: "#94a3b8",
-  Intermediate: "#06b6d4",
-  "Upper-Intermediate": "#3b82f6",
-  Advanced: "#a855f7",
-  Expert: "#00f5ff",
-  Master: "#f59e0b",
-};
-
 const categoryNames = {
   PROGRAMMING_LANGUAGES: "Programming Languages",
   DESIGN: "UI/UX Design",
@@ -54,30 +34,11 @@ const CATEGORY_ICONS = {
   OTHER: "🔬",
 };
 
-function SkillCard({ categoryKey, skills, cardIndex }) {
-  const [expanded, setExpanded] = useState(true);
-  const barsRef = useRef([]);
+function SkillCard({ categoryKey, skills, cardIndex, expanded, onToggle }) {
   const cardRef = useRef(null);
-  const animatedRef = useRef(false);
-
-  const animateBars = () => {
-    if (animatedRef.current) return;
-    animatedRef.current = true;
-    barsRef.current.forEach((bar, i) => {
-      if (!bar) return;
-      const pct = LEVEL_PCT[skills[i]?.level] ?? 60;
-      gsap.to(bar, {
-        width: `${pct}%`,
-        duration: 1.1,
-        ease: "power3.out",
-        delay: i * 0.06,
-      });
-    });
-  };
 
   useEffect(() => {
     if (!cardRef.current) return;
-    // GSAP ScrollTrigger to animate bars when card enters view
     const trigger = ScrollTrigger.create({
       trigger: cardRef.current,
       start: "top 80%",
@@ -92,7 +53,6 @@ function SkillCard({ categoryKey, skills, cardIndex }) {
             duration: 0.65,
             ease: "power3.out",
             delay: cardIndex * 0.08,
-            onComplete: animateBars,
           }
         );
       },
@@ -124,7 +84,7 @@ function SkillCard({ categoryKey, skills, cardIndex }) {
     >
       {/* Card Header */}
       <div
-        onClick={() => setExpanded((v) => !v)}
+        onClick={onToggle}
         style={{
           display: "flex",
           alignItems: "center",
@@ -201,102 +161,43 @@ function SkillCard({ categoryKey, skills, cardIndex }) {
             maxHeight: "560px",
           }}
         >
-          {skills.map((skill, i) => {
-            const pct = LEVEL_PCT[skill.level] ?? 60;
-            const color = LEVEL_COLOR[skill.level] ?? "#00f5ff";
-            return (
-              <div key={skill._id || i}>
-                {/* Skill name row */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "6px",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    {skill.icon && (
-                      <span
-                        style={{ fontSize: "0.9rem" }}
-                        dangerouslySetInnerHTML={{ __html: skill.icon }}
-                      />
-                    )}
-                    <span
-                      style={{
-                        fontSize: "0.85rem",
-                        fontWeight: skill.highlight ? 700 : 500,
-                        color: skill.highlight ? "#00f5ff" : "#e2e8f0",
-                      }}
-                    >
-                      {skill.skillName}
-                    </span>
-                    {skill.highlight && (
-                      <span
-                        style={{
-                          fontSize: "0.6rem",
-                          padding: "1px 6px",
-                          background: "rgba(0,245,255,0.1)",
-                          border: "1px solid rgba(0,245,255,0.25)",
-                          color: "#00f5ff",
-                          borderRadius: "10px",
-                          fontWeight: 700,
-                          letterSpacing: "0.04em",
-                        }}
-                      >
-                        KEY
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span
-                      style={{
-                        fontSize: "0.7rem",
-                        color: color,
-                        fontWeight: 700,
-                        minWidth: "40px",
-                        textAlign: "right",
-                      }}
-                    >
-                      {pct}%
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.68rem",
-                        color: "#475569",
-                        minWidth: "90px",
-                        textAlign: "right",
-                      }}
-                    >
-                      {skill.level}
-                    </span>
-                  </div>
-                </div>
-                {/* Progress bar */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "5px",
-                    background: "rgba(255,255,255,0.06)",
-                    borderRadius: "5px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    ref={(el) => (barsRef.current[i] = el)}
-                    style={{
-                      height: "100%",
-                      width: "0%",
-                      borderRadius: "5px",
-                      background: `linear-gradient(90deg, ${color}, rgba(0,245,255,0.6))`,
-                      boxShadow: `0 0 8px ${color}55`,
-                      transition: "width 0.1s",
-                    }}
+          {skills.map((skill, i) => (
+            <div
+              key={skill._id || i}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {skill.icon && (
+                  <span
+                    style={{ fontSize: "0.9rem" }}
+                    dangerouslySetInnerHTML={{ __html: skill.icon }}
                   />
-                </div>
+                )}
+                <span
+                  style={{
+                    fontSize: "0.85rem",
+                    fontWeight: skill.highlight ? 700 : 500,
+                    color: skill.highlight ? "#00f5ff" : "#e2e8f0",
+                  }}
+                >
+                  {skill.skillName}
+                </span>
               </div>
-            );
-          })}
+              <span
+                style={{
+                  fontSize: "0.68rem",
+                  color: "#475569",
+                  textAlign: "right",
+                }}
+              >
+                {skill.level}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -306,6 +207,7 @@ function SkillCard({ categoryKey, skills, cardIndex }) {
 function Skills({ skills }) {
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState(null);
 
   const groupedSkills = skills
     ? skills.reduce((acc, curr) => {
@@ -368,7 +270,7 @@ function Skills({ skills }) {
           </h2>
           <p style={{ color: "#94a3b8", fontSize: "1.05rem", marginTop: "10px" }}>
             {totalSkills > 0
-              ? `${totalSkills} skills across ${categoryKeys.length} categories — click any category to expand`
+              ? `${totalSkills} skills across ${categoryKeys.length} categories — click a category to view its skills`
               : "Technologies I work with and areas of expertise"}
           </p>
         </div>
@@ -415,9 +317,11 @@ function Skills({ skills }) {
         {categoryKeys.length > 0 ? (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-              gap: "20px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              maxWidth: "720px",
+              margin: "0 auto",
             }}
           >
             {categoryKeys.map((key, idx) => (
@@ -426,6 +330,10 @@ function Skills({ skills }) {
                 categoryKey={key}
                 skills={groupedSkills[key]}
                 cardIndex={idx}
+                expanded={activeCategory === key}
+                onToggle={() =>
+                  setActiveCategory((current) => (current === key ? null : key))
+                }
               />
             ))}
           </div>
