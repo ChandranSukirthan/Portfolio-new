@@ -1,9 +1,9 @@
 {
-  "/api/experience/route": "app/api/experience/route.js",
   "/api/skills/route": "app/api/skills/route.js",
+  "/api/experience/route": "app/api/experience/route.js",
   "/api/profile/route": "app/api/profile/route.js",
-  "/api/education/route": "app/api/education/route.js",
-  "/api/projects/route": "app/api/projects/route.js",
   "/api/achievements/route": "app/api/achievements/route.js",
-  "/api/contact-info/route": "app/api/contact-info/route.js"
+  "/api/projects/route": "app/api/projects/route.js",
+  "/api/contact-info/route": "app/api/contact-info/route.js",
+  "/api/education/route": "app/api/education/route.js"
 }
