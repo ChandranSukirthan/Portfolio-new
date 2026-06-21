@@ -74,7 +74,7 @@ function ManageProjects() {
       }
     } catch (err) {
       console.error("Failed to upload image:", err);
-      setError("Image upload failed. Please try again.");
+      setError(err.response?.data?.message || err.message || "Image upload failed. Please try again.");
     } finally {
       setUploadLoading(false);
     }
