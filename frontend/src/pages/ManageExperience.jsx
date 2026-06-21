@@ -153,7 +153,7 @@ function ManageExperience() {
       <Navbar isDashboard={true} />
       <AdminSidebar />
 
-      <main className="admin-main" style={{ paddingTop: "90px" }}>
+      <main className="admin-main">
 
         {/* ── Page Header ── */}
         <div style={{

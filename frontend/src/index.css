@@ -612,8 +612,27 @@ button, [role="button"] { cursor: none; }
 
 .admin-container { min-height: 100vh; background: #000; color: #f8fafc; padding-left: 260px; transition: padding-left 0.3s cubic-bezier(0.4,0,0.2,1); }
 .admin-sidebar { width: 260px; min-height: 100vh; background: #080b12; border-right: 1px solid #1f2937; padding: 30px 15px; display: flex; flex-direction: column; gap: 40px; position: fixed; left: 0; top: 0; z-index: 110; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
-.admin-main { padding: 40px; }
+.admin-main { padding: 90px 40px 40px 40px; }
 .admin-sidebar-toggle { display: none; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; padding: 8px; cursor: pointer; align-items: center; justify-content: center; }
+
+/* Dashboard Navbar specific adjustments */
+.admin-container .nav-container {
+  left: 260px !important;
+  width: calc(100% - 260px) !important;
+  background: rgba(8, 11, 18, 0.85) !important;
+  backdrop-filter: blur(24px) saturate(1.4) !important;
+  WebkitBackdropFilter: blur(24px) saturate(1.4) !important;
+  border-bottom: 1px solid #1f2937 !important;
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+}
+
+/* Hide logo on dashboard navbar for desktop since sidebar already shows it */
+@media (min-width: 1025px) {
+  .admin-nav-logo {
+    display: none !important;
+  }
+}
 
 /* ============================================================
    FORMS (admin)
@@ -712,7 +731,13 @@ button, [role="button"] { cursor: none; }
   body.admin-sidebar-open .admin-sidebar-backdrop {
     display: block; animation: fadeIn 0.2s ease-out forwards;
   }
-  .admin-main { padding: 24px 16px; }
+  .admin-main { padding: 90px 16px 24px 16px; }
+  .admin-container .nav-container {
+    left: 0 !important;
+    width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 
   .flip-card { min-height: 200px; }
 }

@@ -4,7 +4,9 @@
 
 /* Hide legacy cursor elements if present elsewhere */
 #cursor-dot,
-#cursor-trail {
+#cursor-trail,
+.space-cursor-ring,
+.space-cursor-aura {
   display: none !important;
 }
 

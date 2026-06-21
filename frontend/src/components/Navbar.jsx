@@ -151,6 +151,7 @@ function Navbar({ isDashboard = false }) {
               <Menu size={20} />
             </button>
             <div
+              className="admin-nav-logo"
               style={{
                 display: "flex",
                 alignItems: "center",
