@@ -76,29 +76,66 @@ export async function POST(req) {
         { status: 200 }
       );
     } else {
-      // Local fallback upload to backend/public/uploads
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      // Check if we are running in a read-only serverless environment (e.g., Vercel)
+      const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
 
-      // Ensure directory exists
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
+      if (isServerless) {
+        // Return base64 Data URI directly so it can be saved in MongoDB
+        const base64 = buffer.toString("base64");
+        const mimeType = file.type || "image/png";
+        const dataUri = `data:${mimeType};base64,${base64}`;
+
+        return NextResponse.json(
+          {
+            success: true,
+            message: "File converted to Base64 (Serverless fallback) successfully!",
+            url: dataUri
+          },
+          { status: 200 }
+        );
       }
 
-      // Generate unique file name
-      const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-      const finalPath = path.join(uploadsDir, uniqueFilename);
+      try {
+        // Local fallback upload to backend/public/uploads
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
 
-      // Save to disk
-      await fs.promises.writeFile(finalPath, buffer);
+        // Ensure directory exists
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
 
-      return NextResponse.json(
-        {
-          success: true,
-          message: "File uploaded locally successfully!",
-          url: `/uploads/${uniqueFilename}`
-        },
-        { status: 200 }
-      );
+        // Generate unique file name
+        const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+        const finalPath = path.join(uploadsDir, uniqueFilename);
+
+        // Save to disk
+        await fs.promises.writeFile(finalPath, buffer);
+
+        return NextResponse.json(
+          {
+            success: true,
+            message: "File uploaded locally successfully!",
+            url: `/uploads/${uniqueFilename}`
+          },
+          { status: 200 }
+        );
+      } catch (writeError) {
+        console.warn("Local file write failed, falling back to Base64 Data URI:", writeError.message);
+        
+        // Final fallback: return Base64 Data URI
+        const base64 = buffer.toString("base64");
+        const mimeType = file.type || "image/png";
+        const dataUri = `data:${mimeType};base64,${base64}`;
+
+        return NextResponse.json(
+          {
+            success: true,
+            message: "File converted to Base64 successfully!",
+            url: dataUri
+          },
+          { status: 200 }
+        );
+      }
     }
   } catch (error) {
     console.error("Upload Route Error:", error.message);

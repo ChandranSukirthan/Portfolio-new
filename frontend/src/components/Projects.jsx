@@ -19,7 +19,7 @@ function ProjectModal({ project, backendBase, onClose }) {
   const drawerRef = useRef(null);
 
   const projectImage = project.projectImage
-    ? project.projectImage.startsWith("http")
+    ? (project.projectImage.startsWith("http") || project.projectImage.startsWith("data:"))
       ? project.projectImage
       : `${backendBase}${project.projectImage}`
     : "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop";
@@ -226,7 +226,7 @@ function ProjectCard({ project, backendBase, onOpenModal, cardIndex }) {
   const isMobile = window.innerWidth < 768;
 
   const projectImage = project.projectImage
-    ? project.projectImage.startsWith("http")
+    ? (project.projectImage.startsWith("http") || project.projectImage.startsWith("data:"))
       ? project.projectImage
       : `${backendBase}${project.projectImage}`
     : "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop";

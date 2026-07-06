@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../api/api";
+import API, { getBackendBase } from "../api/api";
 import AdminSidebar from "../components/AdminSidebar";
 import Navbar from "../components/Navbar";
 import { Plus, Trash2, Edit3, Save, X, Upload } from "lucide-react";
@@ -263,6 +263,29 @@ function ManageProjects() {
                 </label>
               </div>
             </div>
+
+            {formData.projectImage && (
+              <div className="form-group">
+                <label className="form-label">Image Preview</label>
+                <div style={{ position: "relative", width: "fit-content" }}>
+                  <img 
+                    src={formData.projectImage.startsWith("http") || formData.projectImage.startsWith("data:")
+                      ? formData.projectImage
+                      : `${getBackendBase()}${formData.projectImage}`} 
+                    alt="Project Preview" 
+                    style={{ maxWidth: "240px", maxHeight: "160px", objectFit: "cover", borderRadius: "8px", border: "1px solid #1f2937" }} 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setFormData(prev => ({ ...prev, projectImage: "" }))} 
+                    style={{ position: "absolute", top: "5px", right: "5px", background: "rgba(239, 68, 68, 0.9)", border: "none", color: "#fff", cursor: "pointer", borderRadius: "50%", padding: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    title="Remove Image"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="form-group">
               <label className="form-label">Project Description</label>
