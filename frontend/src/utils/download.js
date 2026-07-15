@@ -1,44 +1,25 @@
-/**
- * Safely downloads a file (including Base64 Data URIs) without opening new tabs
- * that might get blocked by browser security (about:blank#blocked).
- * 
- * @param {string} url The URL or Data URI to download
- * @param {string} fileName The name to save the file as
- */
-export const downloadFile = async (url, fileName = "Resume.pdf") => {
+export const downloadFile = (url, fileName = "Resume.pdf") => {
   if (!url || url === "#") return;
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
 
   // Case 1: Data URI (base64)
   if (url.startsWith("data:")) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
+    // For Data URIs, do NOT use target="_blank" to prevent about:blank#blocked
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    return;
-  }
-
-  // Case 2: Normal URL
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Network response was not ok");
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = fileName;
+  } else {
+    // Case 2: Normal URL
+    // Open in a new tab/window to prevent taking the user away from the site,
+    // and let the browser handle the download/preview natively.
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    // Clean up the URL object
-    window.URL.revokeObjectURL(blobUrl);
-  } catch (error) {
-    console.warn("Failed to download via fetch, falling back to window.open:", error);
-    // Fallback: Open in new tab (browsers won't block HTTP/HTTPS urls, only data: urls)
-    window.open(url, "_blank", "noopener,noreferrer");
   }
 };
 
