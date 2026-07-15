@@ -3,6 +3,7 @@ import {
   GitBranch, Globe, Mail, Phone, Download, ExternalLink, Calendar, MapPin,
   Award, Briefcase, GraduationCap, ArrowRight, X, ChevronLeft
 } from "lucide-react";
+import { downloadFile } from "../utils/download";
 
 /* ─────────────────────────────────────────────────────────────────
    SectionPanel — full-screen overlay rendered when a planet is clicked
@@ -234,12 +235,13 @@ function HomeSection({ profile, backendBase }) {
               <ArrowRight size={16} />
             </button>
             {profile?.cv && (
-              <a
-                href={profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`}
-                target="_blank" rel="noreferrer" className="btn-secondary" download
+              <button
+                onClick={() => downloadFile(profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`, "Sukirthan_CV.pdf")}
+                className="btn-secondary"
+                style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
               >
                 <Download size={16} /><span>Download CV</span>
-              </a>
+              </button>
             )}
           </div>
           <div style={{ display: "flex", gap: "16px", marginTop: "12px", alignItems: "center" }}>

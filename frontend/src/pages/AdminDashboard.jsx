@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import API, { getBackendBase } from "../api/api";
 import Navbar from "../components/Navbar";
+import { viewFile } from "../utils/download";
 import { 
   User, Briefcase, GraduationCap, Code, FileText, Image as ImageIcon, 
   Plus, Edit2, Trash2, CheckCircle2, AlertCircle, Save, LogOut, ArrowLeft, Upload, ExternalLink
@@ -611,9 +612,14 @@ function AdminDashboard() {
                           <input type="file" accept=".pdf" onChange={(e) => handleFileUpload(e, "cv")} style={{ display: "none" }} />
                         </label>
                         {profile.cv && (
-                          <a href={profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`} target="_blank" rel="noreferrer" className="btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>
-                            <ExternalLink size={14} />
-                          </a>
+                          <button
+                             type="button"
+                             onClick={() => viewFile(profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`)}
+                             className="btn-secondary"
+                             style={{ padding: "6px 12px", fontSize: "0.8rem", cursor: "pointer", display: "inline-flex", alignItems: "center" }}
+                           >
+                             <ExternalLink size={14} />
+                           </button>
                         )}
                       </div>
                     </div>

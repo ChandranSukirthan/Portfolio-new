@@ -1,5 +1,6 @@
 import { ArrowRight, Download } from "lucide-react";
 import { getBackendBase } from "../api/api";
+import { downloadFile } from "../utils/download";
 
 function Hero({ profile }) {
   // Fallbacks
@@ -150,17 +151,14 @@ function Hero({ profile }) {
             </button>
 
             {resumeLink !== "#" && (
-              <a
-                href={resumeLink}
-                target="_blank"
-                rel="noreferrer"
+              <button
+                onClick={() => downloadFile(resumeLink, "Sukirthan_Resume.pdf")}
                 className="btn-secondary"
-                style={{ padding: "14px 32px", fontSize: "0.95rem" }}
-                download
+                style={{ padding: "14px 32px", fontSize: "0.95rem", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
               >
                 <Download size={16} />
                 <span>Download Resume</span>
-              </a>
+              </button>
             )}
           </div>
 

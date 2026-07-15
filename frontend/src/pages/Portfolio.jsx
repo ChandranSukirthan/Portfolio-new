@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API, { getBackendBase } from "../api/api";
 import Navbar from "../components/Navbar";
+import { downloadFile } from "../utils/download";
 import { 
   Github, Linkedin, Mail, Phone, Download, ExternalLink, Calendar, MapPin, 
   Award, Briefcase, GraduationCap, ArrowRight, ShieldCheck, ChevronRight, X 
@@ -144,16 +145,14 @@ function Portfolio() {
                 <ArrowRight size={16} />
               </a>
               {profile?.cv && (
-                <a 
-                  href={profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`} 
-                  target="_blank" 
-                  rel="noreferrer" 
+                <button 
+                  onClick={() => downloadFile(profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`, "Sukirthan_CV.pdf")} 
                   className="btn-secondary"
-                  download
+                  style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
                 >
                   <Download size={16} />
                   <span>Download CV</span>
-                </a>
+                </button>
               )}
             </div>
 
