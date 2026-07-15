@@ -3,18 +3,18 @@ export const downloadFile = (url, fileName = "Resume.pdf") => {
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = fileName;
 
   // Case 1: Data URI (base64)
   if (url.startsWith("data:")) {
     // For Data URIs, do NOT use target="_blank" to prevent about:blank#blocked
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   } else {
     // Case 2: Normal URL
     // Open in a new tab/window to prevent taking the user away from the site,
-    // and let the browser handle the download/preview natively.
+    // and let the browser display the PDF resume file natively.
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     document.body.appendChild(link);
