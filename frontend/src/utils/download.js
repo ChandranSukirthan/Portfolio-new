@@ -1,16 +1,21 @@
+import { getBackendBase } from "../api/api";
+
 /**
- * Downloads a file from a URL or Data URI.
- * Uses fetch + Blob URL to bypass browser pop-up blockers (about:blank#blocked).
+ * Downloads a file by routing it through the backend proxy (/api/download)
+ * so that CORS restrictions and browser popup-blockers (about:blank#blocked)
+ * are completely avoided.
  *
- * @param {string} url       The URL or Data URI to download
+ * @param {string} url       The original file URL or Data URI
  * @param {string} fileName  The suggested filename for the download
  */
 export const downloadFile = async (url, fileName = "Resume.pdf") => {
   if (!url || url === "#") return;
 
   try {
+    let fetchUrl;
+
     if (url.startsWith("data:")) {
-      // ── Case 1: Data URI (base64) ──────────────────────────────────────
+      // ── Case 1: Data URI – convert to blob directly, no fetch needed ──
       const parts = url.split(",");
       const mimeType = parts[0].match(/:(.*?);/)[1];
       const byteCharacters = atob(parts[1]);
@@ -28,26 +33,35 @@ export const downloadFile = async (url, fileName = "Resume.pdf") => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(blobUrl);
+      return;
+    } else if (url.startsWith("http://") || url.startsWith("https://")) {
+      // ── Case 2: External URL (Cloudinary, etc.) ───────────────────────
+      // Route through our own backend proxy to avoid CORS + popup-blocker.
+      const backendBase = getBackendBase();
+      fetchUrl = `${backendBase}/api/download?url=${encodeURIComponent(url)}&name=${encodeURIComponent(fileName)}`;
     } else {
-      // ── Case 2: Normal URL (http/https or relative) ────────────────────
-      // Fetch the file as a blob to avoid the "about:blank#blocked" pop-up
-      // blocker that triggers when programmatically opening a new tab.
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
+      // ── Case 3: Relative URL (local backend /uploads/...) ─────────────
+      const backendBase = getBackendBase();
+      fetchUrl = `${backendBase}/api/download?url=${encodeURIComponent(`${backendBase}${url}`)}&name=${encodeURIComponent(fileName)}`;
     }
+
+    // Fetch via our proxy – same origin so no CORS issues
+    const response = await fetch(fetchUrl);
+    if (!response.ok) throw new Error(`Proxy fetch failed: ${response.status}`);
+
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
   } catch (err) {
-    console.error("Download failed, falling back to direct link:", err);
-    // Last-resort fallback: direct navigation (stays on same tab)
+    console.error("Download failed:", err);
+    // Last resort: navigate directly (same tab, no popup)
     const link = document.createElement("a");
     link.href = url;
     link.download = fileName;
