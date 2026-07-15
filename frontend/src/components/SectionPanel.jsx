@@ -149,7 +149,7 @@ export default function SectionPanel({
 
             {activeProjectModal.image && (
               <div style={{ width: "100%", height: "240px", borderRadius: "12px", overflow: "hidden", marginBottom: "20px" }}>
-                <img src={activeProjectModal.image.startsWith("http") ? activeProjectModal.image : `${backendBase}${activeProjectModal.image}`} alt={activeProjectModal.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={activeProjectModal.image.startsWith("http") || activeProjectModal.image.startsWith("data:") ? activeProjectModal.image : `${backendBase}${activeProjectModal.image}`} alt={activeProjectModal.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
             )}
 
@@ -236,7 +236,7 @@ function HomeSection({ profile, backendBase }) {
             </button>
             {profile?.cv && (
               <button
-                onClick={() => downloadFile(profile.cv.startsWith("http") ? profile.cv : `${backendBase}${profile.cv}`, "Sukirthan_CV.pdf")}
+                onClick={() => downloadFile(profile.cv.startsWith("http") || profile.cv.startsWith("data:") ? profile.cv : `${backendBase}${profile.cv}`, "Sukirthan_CV.pdf")}
                 className="btn-secondary"
                 style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
               >
@@ -268,7 +268,7 @@ function HomeSection({ profile, backendBase }) {
             }} />
             {profile?.profileImage ? (
               <img
-                src={profile.profileImage.startsWith("http") ? profile.profileImage : `${backendBase}${profile.profileImage}`}
+                src={profile.profileImage.startsWith("http") || profile.profileImage.startsWith("data:") ? profile.profileImage : `${backendBase}${profile.profileImage}`}
                 alt={profile.name}
                 style={{ width: "320px", height: "360px", objectFit: "cover", borderRadius: "24px", border: "2px solid rgba(255,255,255,0.1)", boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}
               />
@@ -483,7 +483,7 @@ function ProjectsSection({ filteredProjects, categories, selectedCategory, setSe
             >
               <div style={{ width: "100%", height: "180px", position: "relative", overflow: "hidden", background: "rgba(255,255,255,0.02)" }}>
                 {item.image ? (
-                  <img src={item.image.startsWith("http") ? item.image : `${backendBase}${item.image}`} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }} className="project-thumbnail" />
+                  <img src={item.image.startsWith("http") || item.image.startsWith("data:") ? item.image : `${backendBase}${item.image}`} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }} className="project-thumbnail" />
                 ) : (
                   <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Award size={48} style={{ color: "#64748b" }} />

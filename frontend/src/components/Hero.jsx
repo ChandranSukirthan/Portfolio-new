@@ -13,17 +13,19 @@ function Hero({ profile }) {
 
   const backendBase = getBackendBase();
   const profileImage = profile?.profileImage
-    ? profile.profileImage.startsWith("http")
+    ? profile.profileImage.startsWith("http") || profile.profileImage.startsWith("data:")
       ? profile.profileImage
       : `${backendBase}${profile.profileImage}`
     : "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=300&auto=format&fit=crop";
 
   const resumeLink = profile?.resumeLink
-    ? profile.resumeLink.startsWith("http")
+    ? profile.resumeLink.startsWith("http") || profile.resumeLink.startsWith("data:")
       ? profile.resumeLink
       : `${backendBase}${profile.resumeLink}`
     : profile?.cv
-    ? `${backendBase}${profile.cv}`
+    ? profile.cv.startsWith("http") || profile.cv.startsWith("data:")
+      ? profile.cv
+      : `${backendBase}${profile.cv}`
     : "#";
 
   const scrollToContact = () => {
