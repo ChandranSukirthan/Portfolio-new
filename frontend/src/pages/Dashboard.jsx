@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../api/api";
 import AdminSidebar from "../components/AdminSidebar";
 import Navbar from "../components/Navbar";
-import { Briefcase, Code2, Award, Mail } from "lucide-react";
+import { Briefcase, Code2, Award, Mail, Building2, GraduationCap, ArrowRight } from "lucide-react";
 
 function Dashboard() {
   const [stats, setStats] = useState({
     projects: 0,
     skills: 0,
     achievements: 0,
-    messages: 0
+    messages: 0,
+    experience: 0,
+    education: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,18 +25,22 @@ function Dashboard() {
     setLoading(true);
     setError("");
     try {
-      const [projRes, skillRes, achRes, msgRes] = await Promise.all([
+      const [projRes, skillRes, achRes, msgRes, expRes, eduRes] = await Promise.all([
         API.get("/projects"),
         API.get("/skills"),
         API.get("/achievements"),
-        API.get("/contact-messages")
+        API.get("/contact-messages"),
+        API.get("/experience"),
+        API.get("/education")
       ]);
 
       setStats({
         projects: projRes.data?.length || 0,
         skills: skillRes.data?.length || 0,
         achievements: achRes.data?.length || 0,
-        messages: msgRes.data?.length || 0
+        messages: msgRes.data?.length || 0,
+        experience: expRes.data?.length || 0,
+        education: eduRes.data?.length || 0
       });
     } catch (err) {
       console.error("Failed to load dashboard metrics:", err);
@@ -44,10 +51,12 @@ function Dashboard() {
   };
 
   const statCards = [
-    { label: "Total Projects", count: stats.projects, icon: Briefcase, color: "#3b82f6" },
-    { label: "Total Skills", count: stats.skills, icon: Code2, color: "#10b981" },
-    { label: "Total Achievements", count: stats.achievements, icon: Award, color: "#a855f7" },
-    { label: "Total Messages", count: stats.messages, icon: Mail, color: "#ef4444" }
+    { label: "Total Projects", count: stats.projects, icon: Briefcase, color: "#3b82f6", path: "/admin/projects" },
+    { label: "Work Experience", count: stats.experience, icon: Building2, color: "#f59e0b", path: "/admin/experience" },
+    { label: "Education History", count: stats.education, icon: GraduationCap, color: "#8b5cf6", path: "/admin/education" },
+    { label: "Total Skills", count: stats.skills, icon: Code2, color: "#10b981", path: "/admin/skills" },
+    { label: "Total Achievements", count: stats.achievements, icon: Award, color: "#ec4899", path: "/admin/achievements" },
+    { label: "Total Messages", count: stats.messages, icon: Mail, color: "#ef4444", path: "/admin/messages" }
   ];
 
   return (
@@ -81,17 +90,29 @@ function Dashboard() {
             {statCards.map((card, idx) => {
               const Icon = card.icon;
               return (
-                <div 
-                  key={idx} 
-                  className="glass-panel" 
-                  style={{ 
-                    padding: "24px", 
-                    background: "#080b12", 
-                    border: "1px solid #1f2937", 
+                <Link
+                  key={idx}
+                  to={card.path}
+                  className="glass-panel"
+                  style={{
+                    padding: "24px",
+                    background: "#080b12",
+                    border: "1px solid #1f2937",
                     borderRadius: "16px",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between"
+                    justifyContent: "space-between",
+                    textDecoration: "none",
+                    cursor: "pointer",
+                    transition: "border-color 0.2s, transform 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = card.color;
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "#1f2937";
+                    e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
                   <div>
@@ -99,11 +120,14 @@ function Dashboard() {
                     <h2 style={{ fontSize: "2.25rem", fontWeight: 800, color: "#fff", marginTop: "8px" }}>
                       {card.count}
                     </h2>
+                    <span style={{ fontSize: "0.75rem", color: card.color, display: "inline-flex", alignItems: "center", gap: "4px", marginTop: "4px" }}>
+                      Manage <ArrowRight size={12} />
+                    </span>
                   </div>
                   <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: `rgba(255,255,255,0.02)`, border: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Icon size={22} style={{ color: card.color }} />
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

@@ -31,12 +31,24 @@ function ManageExperience() {
   /* ─── helpers ────────────────────────────────────────────── */
   const formatDateForInput = (d) => {
     if (!d) return "";
-    return new Date(d).toISOString().split("T")[0];
+    try {
+      const parsed = new Date(d);
+      if (isNaN(parsed.getTime())) return "";
+      return parsed.toISOString().split("T")[0];
+    } catch {
+      return "";
+    }
   };
 
   const formatDisplayDate = (d) => {
     if (!d) return "";
-    return new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short" });
+    try {
+      const parsed = new Date(d);
+      if (isNaN(parsed.getTime())) return String(d);
+      return parsed.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+    } catch {
+      return String(d);
+    }
   };
 
   const clearAlerts = () => { setSuccess(""); setError(""); };

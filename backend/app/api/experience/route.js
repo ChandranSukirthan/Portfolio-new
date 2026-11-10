@@ -21,6 +21,7 @@ export async function GET() {
 export async function POST(req) {
   try {
     await protect(req);
+    await connectDB();
     const body = await req.json();
 
     const item = await Experience.create(body);

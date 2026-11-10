@@ -3,11 +3,11 @@ import API from "../api/api";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Education from "../components/Education";
+import Experience from "../components/Experience";
 import Skills from "../components/Skills";
 import Projects from "../components/Projects";
 import Achievements from "../components/Achievements";
 import Contact from "../components/Contact";
-import { Calendar, MapPin } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
@@ -361,156 +361,7 @@ function Home() {
       <Education educationList={educationList} />
 
       {/* 3. EXPERIENCE */}
-      <section
-        id="experience"
-        style={{
-          padding: "100px 5%",
-          background: "transparent",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-          position: "relative",
-        }}
-      >
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "60px" }} className="reveal">
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "5px 14px",
-                background: "rgba(0,245,255,0.06)",
-                border: "1px solid rgba(0,245,255,0.2)",
-                borderRadius: "20px",
-                color: "#00f5ff",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: "16px",
-              }}
-            >
-              Professional Journey
-            </div>
-            <h2
-              style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}
-            >
-              Experience
-            </h2>
-            <p style={{ color: "#94a3b8", fontSize: "1.05rem", marginTop: "10px" }}>
-              My career track and professional milestones
-            </p>
-          </div>
-
-          <div className="timeline-container">
-            {experience.map((item) => (
-              <div key={item._id} className="timeline-item reveal">
-                <div
-                  className="glass-panel"
-                  style={{ padding: "24px", background: "#080b12", border: "1px solid #1f2937" }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      flexWrap: "wrap",
-                      gap: "10px",
-                    }}
-                  >
-                    <div>
-                      <h3 style={{ fontSize: "1.15rem", fontWeight: 700, color: "#fff" }}>
-                        {item.position}
-                      </h3>
-                      <h4
-                        style={{
-                          fontSize: "0.95rem",
-                          color: "#00f5ff",
-                          fontWeight: 600,
-                          marginTop: "4px",
-                        }}
-                      >
-                        {item.company}
-                      </h4>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-end",
-                        fontSize: "0.8rem",
-                        color: "#94a3b8",
-                      }}
-                    >
-                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                        <Calendar size={12} />
-                        <span>
-                          {formatDate(item.startDate)} —{" "}
-                          {item.current ? "Present" : formatDate(item.endDate)}
-                        </span>
-                      </span>
-                      {item.location && (
-                        <span
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                            marginTop: "2px",
-                          }}
-                        >
-                          <MapPin size={12} />
-                          <span>{item.location}</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {item.description && (
-                    <p
-                      style={{
-                        color: "#94a3b8",
-                        fontSize: "0.9rem",
-                        marginTop: "14px",
-                        lineHeight: 1.6,
-                        whiteSpace: "pre-line",
-                      }}
-                    >
-                      {item.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-
-            {experience.length === 0 && (
-              <div
-                className="glass-panel reveal"
-                style={{
-                  padding: "24px",
-                  background: "#080b12",
-                  border: "1px solid #1f2937",
-                  textAlign: "center",
-                }}
-              >
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
-                  AI Undergrad &amp; Full-stack Enthusiast
-                </h3>
-                <h4
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#00f5ff",
-                    fontWeight: 600,
-                    marginTop: "4px",
-                  }}
-                >
-                  Self-Employed
-                </h4>
-                <p style={{ color: "#94a3b8", fontSize: "0.9rem", marginTop: "10px" }}>
-                  Developing MERN stacks and applying neural networks on custom models.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+      <Experience experience={experience} />
 
       {/* 4. PROJECTS */}
       <Projects projects={projects} />

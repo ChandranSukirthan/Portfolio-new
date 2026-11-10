@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
 import { protect } from "@/lib/auth";
 import Experience from "@/models/Experience";
 
@@ -6,6 +7,7 @@ import Experience from "@/models/Experience";
 export async function PUT(req, { params }) {
   try {
     await protect(req);
+    await connectDB();
     const { id } = params;
     const body = await req.json();
 
@@ -41,6 +43,7 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     await protect(req);
+    await connectDB();
     const { id } = params;
 
     const item = await Experience.findByIdAndDelete(id);
