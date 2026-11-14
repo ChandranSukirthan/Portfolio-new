@@ -333,6 +333,32 @@ button, [role="button"] { cursor: none; }
 }
 
 /* ============================================================
+   3D WEB PERSPECTIVE & DEPTH ENHANCEMENTS
+   ============================================================ */
+section {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.glass-panel {
+  position: relative;
+  background: linear-gradient(145deg, rgba(8, 14, 26, 0.88) 0%, rgba(3, 7, 18, 0.96) 100%) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 245, 255, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 245, 255, 0.05);
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 245, 255, 0.08), transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
    TIMELINE (Experience / Education)
    ============================================================ */
 .timeline-container {

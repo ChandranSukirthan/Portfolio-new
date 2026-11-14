@@ -94,7 +94,7 @@ function Home() {
     scene.add(particles);
 
     // ── Floating Stardust Layer (Real 3D Cosmic Depth) ────────
-    const dustCount = 80;
+    const dustCount = 90;
     const dPositions = new Float32Array(dustCount * 3);
     const dColors = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
@@ -121,6 +121,32 @@ function Home() {
     const cosmicDust = new THREE.Points(dGeo, dMat);
     scene.add(cosmicDust);
 
+    // ── 3D Shooting Stars / Meteor Streaks ────────────────────
+    const streakCount = 10;
+    const streakGeo = new THREE.BufferGeometry();
+    const streakPositions = new Float32Array(streakCount * 6);
+    const streakColors = new Float32Array(streakCount * 6);
+
+    const streaks = [];
+    for (let i = 0; i < streakCount; i++) {
+      streaks.push({
+        x: (Math.random() - 0.5) * 14,
+        y: 2 + Math.random() * 6,
+        z: (Math.random() - 0.5) * 8,
+        speed: 0.06 + Math.random() * 0.06,
+        len: 0.7 + Math.random() * 0.5,
+      });
+    }
+
+    const streakMat = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending,
+    });
+    const streakLines = new THREE.LineSegments(streakGeo, streakMat);
+    scene.add(streakLines);
+
     // ── GSAP Camera Drift On Load ────────────────────────────
     camera.position.set(0, 0, 9);
     gsap.to(camera.position, {
@@ -137,6 +163,13 @@ function Home() {
       mouseRef.current.y = normY;
     };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+    // ── Scroll Parallax Depth ────────────────────────────────
+    let scrollY = window.scrollY;
+    const handleScroll = () => {
+      scrollY = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // ── Resize Handler ────────────────────────────────────────
     const handleResize = () => {
@@ -158,8 +191,41 @@ function Home() {
       cosmicDust.rotation.y -= 0.0004;
       cosmicDust.rotation.z += 0.0002;
 
+      // Update 3D shooting stars
+      const posArr = new Float32Array(streakCount * 6);
+      const colArr = new Float32Array(streakCount * 6);
+      for (let i = 0; i < streakCount; i++) {
+        const s = streaks[i];
+        s.x -= s.speed;
+        s.y -= s.speed * 0.7;
+        if (s.y < -5 || s.x < -9) {
+          s.x = 4 + Math.random() * 9;
+          s.y = 4 + Math.random() * 4;
+          s.z = (Math.random() - 0.5) * 8;
+        }
+        const idx = i * 6;
+        posArr[idx] = s.x;
+        posArr[idx + 1] = s.y;
+        posArr[idx + 2] = s.z;
+        posArr[idx + 3] = s.x + s.len;
+        posArr[idx + 4] = s.y + s.len * 0.7;
+        posArr[idx + 5] = s.z;
+
+        colArr[idx] = 0.0; colArr[idx + 1] = 0.96; colArr[idx + 2] = 1.0;
+        colArr[idx + 3] = 0.0; colArr[idx + 4] = 0.2; colArr[idx + 5] = 0.4;
+      }
+      streakGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+      streakGeo.setAttribute("color", new THREE.BufferAttribute(colArr, 3));
+
+      // 3D camera travel based on scroll + mouse parallax
+      const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      const scrollFraction = Math.min(1, Math.max(0, scrollY / maxScroll));
+      const targetZ = 5 - scrollFraction * 1.8;
+      const targetY = mouseRef.current.y * 0.6 - scrollFraction * 2.2;
+
       camera.position.x += (mouseRef.current.x * 0.9 - camera.position.x) * 0.04;
-      camera.position.y += (mouseRef.current.y * 0.6 - camera.position.y) * 0.04;
+      camera.position.y += (targetY - camera.position.y) * 0.04;
+      camera.position.z += (targetZ - camera.position.z) * 0.04;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
@@ -169,6 +235,7 @@ function Home() {
     return () => {
       cancelAnimationFrame(frameRef.current);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };
