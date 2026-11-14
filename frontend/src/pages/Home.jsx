@@ -328,11 +328,9 @@ function Home() {
     const updateLoop = () => {
       currentX += (targetX - currentX) * 0.08;
       currentY += (targetY - currentY) * 0.08;
-      currentRotY += (targetRotY - currentRotY) * 0.08;
-      currentRotX += (targetRotX - currentRotX) * 0.08;
 
       if (contentLayerRef.current) {
-        contentLayerRef.current.style.transform = `perspective(1200px) translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) rotateY(${currentRotY.toFixed(3)}deg) rotateX(${currentRotX.toFixed(3)}deg)`;
+        contentLayerRef.current.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
       }
 
       rafId = requestAnimationFrame(updateLoop);
@@ -567,8 +565,9 @@ function Home() {
         ref={contentLayerRef}
         style={{
           position: "relative",
+          width: "100%",
+          margin: "0 auto",
           zIndex: 1,
-          transformStyle: "preserve-3d",
           willChange: "transform",
         }}
       >
