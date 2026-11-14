@@ -355,34 +355,6 @@ function Hero({ profile }) {
               </div>
             </div>
           </div>
-
-          {/* ── "3D LIVE AVATAR" badge — fades in while video plays ── */}
-          <div style={{
-            marginTop: "14px",
-            height: "36px",   // fixed height so layout doesn't shift
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-            <div style={{
-              opacity: isVideo ? 1 : 0,
-              transform: isVideo ? "scale(1) translateY(0)" : "scale(0.88) translateY(6px)",
-              transition: "opacity 0.4s ease, transform 0.4s ease",
-              pointerEvents: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "7px 20px",
-              borderRadius: "24px",
-              background: "rgba(3,7,18,0.88)",
-              border: "1px solid rgba(0,245,255,0.38)",
-              boxShadow: "0 4px 20px rgba(0,245,255,0.18)",
-              backdropFilter: "blur(12px)",
-            }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#00f5ff", boxShadow: "0 0 8px #00f5ff", display: "inline-block", animation: "pulse-dot 1.4s ease-in-out infinite" }} />
-              <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "#e2e8f0", letterSpacing: "0.14em", textTransform: "uppercase" }}>✦ 3D Live Avatar</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -406,11 +378,6 @@ function Hero({ profile }) {
         @keyframes avatar-float {
           0%   { transform: translateY(0px); }
           100% { transform: translateY(-10px); }
-        }
-
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%       { opacity: 0.4; transform: scale(1.5); }
         }
 
         /* Scroll indicator */
