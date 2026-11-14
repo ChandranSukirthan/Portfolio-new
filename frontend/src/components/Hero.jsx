@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Download, Sparkles } from "lucide-react";
+import { ArrowRight, Download, Volume2, VolumeX, Play, Sparkles, X } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
 import { gsap } from "gsap";
@@ -30,40 +30,73 @@ function Hero({ profile }) {
       : `${backendBase}${profile.cv}`
     : "#";
 
-  // 3D Avatar Video source (user uploaded 3D video placed in /profile-3d.mp4)
-  const avatarVideo = profile?.profileVideo || "/profile-3d.mp4";
-
   const avatarContainerRef = useRef(null);
   const avatarWrapperRef = useRef(null);
   const ringsRef = useRef(null);
-  const videoRef = useRef(null);
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [videoError, setVideoError] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const audioRef = useRef(null);
+  const modalVideoRef = useRef(null);
 
-  // 3D Entrance Animation: Starts from "outer" space and swoops inside to the profile image spot
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
+  // Toggle Intro Voice Audio Playback
+  const toggleAudio = () => {
+    if (!audioRef.current) return;
+    if (isPlayingAudio) {
+      audioRef.current.pause();
+      setIsPlayingAudio(false);
+    } else {
+      if (modalVideoRef.current && !modalVideoRef.current.paused) {
+        modalVideoRef.current.pause();
+      }
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlayingAudio(true);
+        })
+        .catch((err) => {
+          console.error("Audio playback error:", err);
+        });
+    }
+  };
+
+  const handleOpenVideoModal = () => {
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      setIsPlayingAudio(false);
+    }
+    setShowVideoModal(true);
+  };
+
+  const handleCloseVideoModal = () => {
+    if (modalVideoRef.current) {
+      modalVideoRef.current.pause();
+    }
+    setShowVideoModal(false);
+  };
+
+  // 3D Entrance Animation: Glides smoothly inside on load
   useEffect(() => {
     if (avatarWrapperRef.current) {
       gsap.fromTo(
         avatarWrapperRef.current,
         {
-          scale: 2.4,
-          z: 500,
+          scale: 1.6,
           opacity: 0,
-          rotationY: -45,
-          rotationX: 30,
-          filter: "blur(20px) drop-shadow(0 0 70px rgba(0, 245, 255, 0.9))",
+          rotationY: -25,
+          rotationX: 15,
+          filter: "blur(12px) drop-shadow(0 0 50px rgba(0, 245, 255, 0.7))",
         },
         {
           scale: 1,
-          z: 0,
           opacity: 1,
           rotationY: 0,
           rotationX: 0,
-          filter: "blur(0px) drop-shadow(0 0 35px rgba(0, 245, 255, 0.3))",
-          duration: 1.8,
+          filter: "blur(0px) drop-shadow(0 0 35px rgba(0, 245, 255, 0.25))",
+          duration: 1.6,
           ease: "power3.out",
-          delay: 0.35,
+          delay: 0.25,
         }
       );
     }
@@ -72,17 +105,17 @@ function Hero({ profile }) {
       gsap.fromTo(
         ringsRef.current,
         {
-          scale: 3.2,
+          scale: 2.2,
           opacity: 0,
-          rotation: -180,
+          rotation: -120,
         },
         {
           scale: 1,
           opacity: 1,
           rotation: 0,
-          duration: 2.2,
+          duration: 1.8,
           ease: "expo.out",
-          delay: 0.15,
+          delay: 0.1,
         }
       );
     }
@@ -213,25 +246,83 @@ function Hero({ profile }) {
           </p>
 
           {/* Action Buttons */}
-          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginTop: "8px" }}>
+          <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginTop: "8px", alignItems: "center" }}>
             <button
               onClick={scrollToContact}
               className="btn-primary btn-submit-glow"
               id="hero-contact-btn"
-              style={{ padding: "14px 32px", fontSize: "0.95rem" }}
+              style={{ padding: "14px 28px", fontSize: "0.95rem" }}
             >
               <span>Contact Me</span>
               <ArrowRight size={16} />
+            </button>
+
+            {/* Voice Intro Greeting Audio Button */}
+            <button
+              onClick={toggleAudio}
+              className="btn-secondary"
+              style={{
+                padding: "14px 24px",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "10px",
+                borderColor: isPlayingAudio ? "#00f5ff" : "rgba(0, 245, 255, 0.35)",
+                background: isPlayingAudio ? "rgba(0, 245, 255, 0.12)" : "rgba(3, 7, 18, 0.6)",
+                boxShadow: isPlayingAudio ? "0 0 20px rgba(0, 245, 255, 0.35)" : "none",
+                color: "#fff",
+                transition: "all 0.3s ease",
+              }}
+              title="Click to play/pause voice greeting"
+            >
+              {isPlayingAudio ? (
+                <>
+                  <Volume2 size={18} color="#00f5ff" />
+                  <span style={{ color: "#00f5ff", fontWeight: 600 }}>Pause Voice</span>
+                  <div style={{ display: "flex", gap: "3px", alignItems: "flex-end", height: "14px" }}>
+                    <span className="sound-bar bar-1" />
+                    <span className="sound-bar bar-2" />
+                    <span className="sound-bar bar-3" />
+                    <span className="sound-bar bar-4" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Volume2 size={18} color="#38bdf8" />
+                  <span>Voice Intro 🔊</span>
+                </>
+              )}
+            </button>
+
+            {/* Watch 3D Video Intro Button */}
+            <button
+              onClick={handleOpenVideoModal}
+              className="btn-secondary"
+              style={{
+                padding: "14px 22px",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                borderColor: "rgba(56, 189, 248, 0.4)",
+                color: "#38bdf8",
+              }}
+              title="Watch 3D animated intro with audio"
+            >
+              <Play size={15} fill="#38bdf8" />
+              <span>3D Intro Video</span>
             </button>
 
             {resumeLink !== "#" && (
               <button
                 onClick={() => downloadFile(resumeLink, "Sukirthan_Resume.pdf")}
                 className="btn-secondary"
-                style={{ padding: "14px 32px", fontSize: "0.95rem", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
+                style={{ padding: "14px 24px", fontSize: "0.95rem", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
               >
                 <Download size={16} />
-                <span>Download Resume</span>
+                <span>Resume</span>
               </button>
             )}
           </div>
@@ -252,7 +343,7 @@ function Hero({ profile }) {
           </div>
         </div>
 
-        {/* Right Side: 3D Animated Video Profile Avatar */}
+        {/* Right Side: Profile Image with 3D Animated Rings */}
         <div
           ref={avatarContainerRef}
           onMouseMove={handleMouseMove}
@@ -264,7 +355,6 @@ function Hero({ profile }) {
             position: "relative",
             height: "var(--ring-size, 500px)",
             perspective: "1200px",
-            cursor: "grab",
           }}
           className="hero-image-side"
         >
@@ -331,7 +421,7 @@ function Hero({ profile }) {
             </div>
           </div>
 
-          {/* 3D Avatar Video Wrapper with Dynamic Tilt & Floating Animation */}
+          {/* 3D Profile Image Wrapper with Dynamic Tilt & Floating Animation */}
           <div
             ref={avatarWrapperRef}
             className="avatar-3d-interactive"
@@ -343,7 +433,7 @@ function Hero({ profile }) {
               zIndex: 3,
             }}
           >
-            {/* Circular Avatar Shell with Dark & Light Blue Neon Borders */}
+            {/* Circular Shell with Dark & Light Blue Neon Borders */}
             <div
               style={{
                 width: "var(--avatar-size, 320px)",
@@ -361,44 +451,20 @@ function Hero({ profile }) {
               }}
               className="profile-avatar-container"
             >
-              {/* HTML5 3D Animated Video Element */}
-              <video
-                ref={videoRef}
-                src={avatarVideo}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                poster={profileImage}
-                onLoadedData={() => setVideoLoaded(true)}
-                onError={() => setVideoError(true)}
+              {/* Profile Image */}
+              <img
+                src={profileImage}
+                alt={name}
                 style={{
                   width: "100%",
                   height: "100%",
                   borderRadius: "50%",
                   objectFit: "cover",
-                  objectPosition: "center center",
                   border: "4px solid #030712",
                   background: "#030712",
-                  display: videoError ? "none" : "block",
+                  display: "block",
                 }}
               />
-
-              {/* Fallback image if video fails to load */}
-              {videoError && (
-                <img
-                  src={profileImage}
-                  alt={name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: "4px solid #030712",
-                  }}
-                />
-              )}
 
               {/* Subtle glass reflection overlay */}
               <div
@@ -413,53 +479,228 @@ function Hero({ profile }) {
               />
             </div>
 
-            {/* 3D Hologram Badge Below Avatar */}
+            {/* Quick Interactive Audio & 3D Video Floating Badges */}
             <div
               style={{
                 position: "absolute",
-                bottom: "-14px",
+                bottom: "-20px",
                 left: "50%",
-                transform: "translateX(-50%) translateZ(30px)",
-                display: "inline-flex",
-                alignItems: "center",
+                transform: "translateX(-50%)",
+                display: "flex",
                 gap: "8px",
-                padding: "6px 16px",
-                background: "rgba(3, 7, 18, 0.92)",
-                border: "1px solid rgba(0, 245, 255, 0.35)",
-                borderRadius: "30px",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.6), 0 0 16px rgba(0,245,255,0.25)",
-                backdropFilter: "blur(12px)",
-                color: "#00f5ff",
-                fontSize: "0.74rem",
-                fontWeight: 700,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
+                zIndex: 10,
                 whiteSpace: "nowrap",
-                pointerEvents: "none",
-                zIndex: 5,
               }}
             >
-              <span
+              <button
+                onClick={toggleAudio}
                 style={{
-                  width: "8px",
-                  height: "8px",
-                  borderRadius: "50%",
-                  background: "#00f5ff",
-                  boxShadow: "0 0 8px #00f5ff",
-                  animation: "pulse-dot 1.5s infinite ease-in-out",
+                  background: isPlayingAudio
+                    ? "linear-gradient(135deg, #00f5ff, #38bdf8)"
+                    : "rgba(3, 7, 18, 0.9)",
+                  color: isPlayingAudio ? "#030712" : "#00f5ff",
+                  border: "1.5px solid rgba(0, 245, 255, 0.6)",
+                  borderRadius: "9999px",
+                  padding: "7px 14px",
+                  fontSize: "0.8rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 4px 18px rgba(0, 245, 255, 0.3)",
+                  transition: "all 0.25s ease",
                 }}
-              />
-              <Sparkles size={12} style={{ color: "#38bdf8" }} />
-              <span>3D Live Avatar</span>
+                title="Toggle voice intro sound"
+              >
+                {isPlayingAudio ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                <span>{isPlayingAudio ? "Mute Voice" : "Voice 🔊"}</span>
+              </button>
+
+              <button
+                onClick={handleOpenVideoModal}
+                style={{
+                  background: "rgba(3, 7, 18, 0.9)",
+                  color: "#38bdf8",
+                  border: "1.5px solid rgba(56, 189, 248, 0.5)",
+                  borderRadius: "9999px",
+                  padding: "7px 14px",
+                  fontSize: "0.8rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 4px 14px rgba(56, 189, 248, 0.2)",
+                  transition: "all 0.25s ease",
+                }}
+                title="Watch 3D animated video"
+              >
+                <Play size={13} fill="#38bdf8" />
+                <span>3D Video</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Hidden Audio Element for High Fidelity Voice Intro */}
+      <audio
+        ref={audioRef}
+        src="/intro-audio.m4a"
+        preload="auto"
+        onEnded={() => setIsPlayingAudio(false)}
+      />
+
+      {/* Interactive 3D Animated Video Modal (With Unmuted Sound) */}
+      {showVideoModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(3, 7, 18, 0.88)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+          onClick={handleCloseVideoModal}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "520px",
+              background: "linear-gradient(145deg, #071529 0%, #030712 100%)",
+              border: "1.5px solid rgba(0, 245, 255, 0.4)",
+              borderRadius: "24px",
+              boxShadow: "0 0 60px rgba(0, 245, 255, 0.3), 0 25px 50px rgba(0, 0, 0, 0.8)",
+              overflow: "hidden",
+              padding: "24px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "16px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Sparkles size={18} color="#00f5ff" />
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "1.15rem",
+                    fontWeight: 700,
+                    color: "#fff",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  3D Animated Intro & Voice
+                </h3>
+              </div>
+              <button
+                onClick={handleCloseVideoModal}
+                style={{
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(0, 245, 255, 0.2)",
+                  borderRadius: "50%",
+                  width: "34px",
+                  height: "34px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                title="Close modal"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Video Player With Audio */}
+            <div
+              style={{
+                borderRadius: "16px",
+                overflow: "hidden",
+                border: "1px solid rgba(0, 245, 255, 0.25)",
+                background: "#000",
+                position: "relative",
+              }}
+            >
+              <video
+                ref={modalVideoRef}
+                src="/profile-3d.mp4"
+                controls
+                autoPlay
+                playsInline
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "65vh",
+                  display: "block",
+                  borderRadius: "16px",
+                }}
+              />
+            </div>
+
+            {/* Modal Footer */}
+            <div
+              style={{
+                marginTop: "16px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "12px",
+                flexWrap: "wrap",
+              }}
+            >
+              <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8" }}>
+                🔊 Sound is enabled. Use the video volume slider if needed.
+              </p>
+              <button
+                onClick={handleCloseVideoModal}
+                className="btn-primary"
+                style={{ padding: "8px 22px", fontSize: "0.85rem" }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         :root {
           --avatar-size: 320px;
           --ring-size: 460px;
+        }
+
+        .sound-bar {
+          display: inline-block;
+          width: 3px;
+          background: #00f5ff;
+          border-radius: 2px;
+        }
+        .bar-1 { height: 6px; animation: sound-bounce 0.8s ease-in-out infinite alternate; }
+        .bar-2 { height: 14px; animation: sound-bounce 0.6s ease-in-out infinite alternate 0.15s; }
+        .bar-3 { height: 10px; animation: sound-bounce 0.7s ease-in-out infinite alternate 0.3s; }
+        .bar-4 { height: 5px; animation: sound-bounce 0.5s ease-in-out infinite alternate 0.1s; }
+
+        @keyframes sound-bounce {
+          0% { height: 3px; }
+          100% { height: 14px; }
         }
 
         @keyframes spin-clockwise {
@@ -469,11 +710,6 @@ function Hero({ profile }) {
         @keyframes spin-counterclockwise {
           from { transform: rotate(0deg); }
           to { transform: rotate(-360deg); }
-        }
-
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.85); }
         }
 
         .avatar-3d-interactive {
