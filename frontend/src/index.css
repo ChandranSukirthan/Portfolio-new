@@ -294,7 +294,7 @@ button, [role="button"] { cursor: none; }
   }
 }
 
-/* Subtle continuous floating in 3D space for cards across all sections */
+/* Cards: stable 3D style, NO continuous floating animations */
 .glass-panel,
 .timeline-item > .glass-panel,
 .project-card-wrap,
@@ -307,26 +307,10 @@ button, [role="button"] { cursor: none; }
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.3s ease;
 }
 
-/* Alternating gentle space float across elements */
-.timeline-item:nth-child(odd) > .glass-panel,
-.project-grid > div:nth-child(odd),
-.contact-col:first-child,
-.achievements-grid > div:nth-child(odd) {
-  animation: real-space-float-1 7s ease-in-out infinite alternate;
-}
-
-.timeline-item:nth-child(even) > .glass-panel,
-.project-grid > div:nth-child(even),
-.contact-col:last-child,
-.achievements-grid > div:nth-child(even) {
-  animation: real-space-float-2 8.5s ease-in-out infinite alternate;
-}
-
-/* Interactive hover enhancement */
+/* Interactive hover lift — no wobble, just clean depth lift on hover */
 .glass-panel:hover,
 .project-card-wrap:hover,
 .contact-col:hover {
-  animation-play-state: paused;
   transform: perspective(1000px) translateY(-8px) translateZ(16px) !important;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 35px rgba(0, 245, 255, 0.22) !important;
   border-color: rgba(0, 245, 255, 0.45) !important;

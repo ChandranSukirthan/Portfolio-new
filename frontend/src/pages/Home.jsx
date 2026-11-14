@@ -241,6 +241,35 @@ function Home() {
     };
   }, [loading]);
 
+  // ── Scroll-triggered 3D section entrance (like rising from deep space) ──
+  useEffect(() => {
+    if (loading) return;
+    const timer = setTimeout(() => {
+      const sections = document.querySelectorAll("section");
+      sections.forEach((sec, i) => {
+        if (i === 0) return; // Skip hero (already has its own GSAP animation)
+        gsap.fromTo(
+          sec,
+          { opacity: 0, y: 55, scale: 0.96, transformPerspective: 1200 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: sec,
+              start: "top 88%",
+              once: true,
+            },
+          }
+        );
+      });
+      ScrollTrigger.refresh();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   useEffect(() => {
     loadPublicData();
     initCustomCursor();
