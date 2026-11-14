@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { ArrowRight, Download, Play } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
 import { gsap } from "gsap";
@@ -33,59 +33,87 @@ function Hero({ profile }) {
   const avatarWrapperRef   = useRef(null);
   const ringsRef           = useRef(null);
   const videoRef           = useRef(null);
+  const hasAutoPlayedRef   = useRef(false);
 
-  // State: "profile" shows photo, "video" plays the 3D video
-  const [mode, setMode]       = useState("profile");
+  // Initially "video" so 3D animated video plays on page load
+  const [mode, setMode]         = useState("video");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [videoReady, setVideoReady] = useState(false); // true once canplaythrough fires
 
-  // ── Video readiness: fires when enough data is buffered ───────────────────
+  // ── First time load: automatically play 3D animated video with audio ──────
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid) return;
 
-    const onCanPlay = () => setVideoReady(true);
-    vid.addEventListener("canplaythrough", onCanPlay);
+    const startAutoPlay = () => {
+      if (hasAutoPlayedRef.current) return;
+      hasAutoPlayedRef.current = true;
+      setMode("video");
+      vid.currentTime = 0;
+      vid.volume = 1.0;
+      vid.muted = false;
 
-    // Also set if already ready
-    if (vid.readyState >= 4) setVideoReady(true);
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Autoplay with audio blocked by browser policy, starting muted with gesture unmute:", err);
+          // Browser requires user gesture for audio: start muted so video animates immediately
+          vid.muted = true;
+          vid.play().catch(() => {});
 
-    return () => vid.removeEventListener("canplaythrough", onCanPlay);
+          // Unmute on the first touch, click or scroll
+          const unmuteOnInteraction = () => {
+            vid.muted = false;
+            vid.volume = 1.0;
+            window.removeEventListener("pointerdown", unmuteOnInteraction);
+            window.removeEventListener("touchstart", unmuteOnInteraction);
+            window.removeEventListener("click", unmuteOnInteraction);
+            window.removeEventListener("scroll", unmuteOnInteraction);
+          };
+          window.addEventListener("pointerdown", unmuteOnInteraction, { once: true });
+          window.addEventListener("touchstart", unmuteOnInteraction, { once: true });
+          window.addEventListener("click", unmuteOnInteraction, { once: true });
+          window.addEventListener("scroll", unmuteOnInteraction, { once: true });
+        });
+      }
+    };
+
+    if (vid.readyState >= 2) {
+      startAutoPlay();
+    } else {
+      vid.addEventListener("canplaythrough", startAutoPlay, { once: true });
+      vid.addEventListener("loadeddata", startAutoPlay, { once: true });
+    }
+
+    return () => {
+      vid.removeEventListener("canplaythrough", startAutoPlay);
+      vid.removeEventListener("loadeddata", startAutoPlay);
+    };
   }, []);
 
-  // ── Click avatar: profile → play video | video → back to profile ──────────
-  const handleAvatarClick = useCallback(() => {
-    if (mode === "profile") {
-      // Switch display first, then play
-      setMode("video");
-      const vid = videoRef.current;
-      if (!vid) return;
-      vid.currentTime = 0;
-      vid.volume      = 1.0;
-      vid.muted       = false;
-      // Use a tiny RAF to ensure the element is visible before play() is called
-      requestAnimationFrame(() => {
-        vid.play().catch((err) => {
-          console.warn("Video play failed:", err);
-          // If browser blocks autoplay (shouldn't since user clicked), fallback gracefully
-          setMode("profile");
-        });
-      });
-    } else {
-      // Clicking while video plays → stop & return
-      const vid = videoRef.current;
-      if (vid) {
-        vid.pause();
-        vid.currentTime = 0;
-      }
-      setMode("profile");
-    }
-  }, [mode]);
-
-  // ── Video ended → seamlessly return to profile photo ─────────────────────
+  // ── Video finished → seamlessly show profile image ────────────────────────
   const handleVideoEnded = useCallback(() => {
     setMode("profile");
   }, []);
+
+  // ── Just touch/click the profile to replay or toggle ───────────────────────
+  const handleAvatarClick = useCallback(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    if (mode === "profile") {
+      setMode("video");
+      vid.currentTime = 0;
+      vid.volume = 1.0;
+      vid.muted = false;
+      requestAnimationFrame(() => {
+        vid.play().catch((err) => console.warn("Video play error on click:", err));
+      });
+    } else {
+      // Touching profile while video is playing pauses and returns to profile image
+      vid.pause();
+      setMode("profile");
+    }
+  }, [mode]);
 
   // ── Pause when tab is hidden ──────────────────────────────────────────────
   useEffect(() => {
@@ -255,11 +283,10 @@ function Hero({ profile }) {
                 zIndex: 3,
               }}
             >
-              {/* ── Clickable circular avatar frame ── */}
+              {/* ── Clickable circular avatar frame (Just touch/click to play or switch) ── */}
               <div
                 onClick={handleAvatarClick}
                 className="profile-avatar-container"
-                title={isVideo ? "Click to return to profile" : "Click to play 3D video with audio"}
                 style={{
                   width: "var(--avatar-size,320px)",
                   height: "var(--avatar-size,320px)",
@@ -278,7 +305,7 @@ function Hero({ profile }) {
                   transition: "box-shadow 0.5s ease",
                 }}
               >
-                {/* ── VIDEO (hidden when profile mode) ── */}
+                {/* ── VIDEO (plays automatically on initial load, and on touch) ── */}
                 <video
                   ref={videoRef}
                   src="/profile-3d.mp4"
@@ -299,7 +326,7 @@ function Hero({ profile }) {
                   }}
                 />
 
-                {/* ── PROFILE IMAGE (shown by default) ── */}
+                {/* ── PROFILE IMAGE (shown after video finishes) ── */}
                 <img
                   src={profileImage}
                   alt={name}
@@ -316,36 +343,6 @@ function Hero({ profile }) {
                     zIndex: isVideo ? 0 : 2,
                   }}
                 />
-
-                {/* ── Hover play hint (only in profile mode) ── */}
-                {!isVideo && (
-                  <div
-                    className="avatar-play-hint"
-                    style={{
-                      position: "absolute", inset: 0,
-                      borderRadius: "50%",
-                      background: "rgba(3,7,18,0.42)",
-                      backdropFilter: "blur(2px)",
-                      WebkitBackdropFilter: "blur(2px)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      opacity: 0,
-                      transition: "opacity 0.28s ease",
-                      zIndex: 4,
-                      pointerEvents: "none",
-                    }}
-                  >
-                    <div style={{
-                      width: "58px", height: "58px",
-                      borderRadius: "50%",
-                      background: "rgba(0,245,255,0.18)",
-                      border: "2px solid #00f5ff",
-                      boxShadow: "0 0 28px rgba(0,245,255,0.6)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <Play size={24} fill="#00f5ff" color="#00f5ff" style={{ marginLeft: "4px" }} />
-                    </div>
-                  </div>
-                )}
 
                 {/* ── Glass reflection overlay ── */}
                 <div style={{
@@ -386,20 +383,6 @@ function Hero({ profile }) {
               <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "#e2e8f0", letterSpacing: "0.14em", textTransform: "uppercase" }}>✦ 3D Live Avatar</span>
             </div>
           </div>
-
-          {/* ── "Click to play" hint — fades in when profile mode ── */}
-          <div style={{
-            marginTop: "2px",
-            opacity: isVideo ? 0 : 0.5,
-            transition: "opacity 0.4s ease",
-            pointerEvents: "none",
-            fontSize: "0.72rem",
-            color: "#64748b",
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-          }}>
-            Click to play intro video
-          </div>
         </div>
       </div>
 
@@ -423,11 +406,6 @@ function Hero({ profile }) {
         @keyframes avatar-float {
           0%   { transform: translateY(0px); }
           100% { transform: translateY(-10px); }
-        }
-
-        /* Show play hint on hover (profile mode only) */
-        .profile-avatar-container:hover .avatar-play-hint {
-          opacity: 1 !important;
         }
 
         @keyframes pulse-dot {
