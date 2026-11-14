@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Download, Play } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
 import { gsap } from "gsap";
@@ -36,9 +36,57 @@ function Hero({ profile }) {
   const videoRef = useRef(null);
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [currentMedia, setCurrentMedia] = useState("profile"); // Initially shows user's profile picture!
+  // Initially auto-play video with audio on load; automatically switches to profile photo when finished
+  const [currentMedia, setCurrentMedia] = useState("video");
 
-  // Only when user clicks my profile, play video and audio with 100% synchronization
+  // Initial load: automatically play 3D video with audio for 10s
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = 0;
+    video.volume = 1.0;
+    video.muted = false;
+
+    // Try unmuted autoplay first
+    video.play().catch((err) => {
+      console.warn("Unmuted autoplay restricted by browser policy; trying muted and unlocking on gesture:", err);
+      video.muted = true;
+      video.play().catch((e) => console.warn("Muted autoplay also deferred:", e));
+    });
+
+    // Unmute on first user touch / click / scroll / key interaction
+    const unlockAudio = () => {
+      if (video) {
+        video.muted = false;
+        video.volume = 1.0;
+        if (video.paused && currentMedia === "video") {
+          video.play().catch(() => {});
+        }
+      }
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("click", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("scroll", unlockAudio);
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { passive: true });
+    window.addEventListener("touchstart", unlockAudio, { passive: true });
+    window.addEventListener("click", unlockAudio, { passive: true });
+    window.addEventListener("keydown", unlockAudio, { passive: true });
+    window.addEventListener("scroll", unlockAudio, { passive: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("click", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("scroll", unlockAudio);
+    };
+  }, []);
+
+  // When user touches/clicks the profile circle: replay the 10s video with sound, or toggle back
   const handleAvatarClick = () => {
     if (currentMedia === "profile") {
       setCurrentMedia("video");
@@ -47,7 +95,7 @@ function Hero({ profile }) {
         videoRef.current.volume = 1.0;
         videoRef.current.muted = false;
         videoRef.current.play().catch((err) => {
-          console.warn("Video play error on click:", err);
+          console.warn("Video play error on touch/click:", err);
         });
       }
     } else {
@@ -59,7 +107,7 @@ function Hero({ profile }) {
     }
   };
 
-  // When video completes, seamlessly return to showing the profile picture
+  // When video completes (10s), seamlessly return to showing the profile picture
   const handleVideoEnded = () => {
     setCurrentMedia("profile");
   };
@@ -365,14 +413,15 @@ function Hero({ profile }) {
               }}
               className="profile-avatar-container"
               onClick={handleAvatarClick}
-              title={currentMedia === "profile" ? "Click to play 3D animated video with sound" : "Click to return to profile photo"}
+              title={currentMedia === "profile" ? "Touch to play 3D animated video" : "Touch to show profile photo"}
             >
-              {/* 3D Animated Character Video (Plays with audio on click) */}
+              {/* 3D Animated Character Video (Auto-plays on initial load with audio, replay on touch) */}
               <video
                 ref={videoRef}
                 src="/profile-3d.mp4"
                 preload="auto"
                 playsInline
+                autoPlay
                 onEnded={handleVideoEnded}
                 style={{
                   position: "absolute",
@@ -390,7 +439,7 @@ function Hero({ profile }) {
                 }}
               />
 
-              {/* Profile Image (Shown by default on page load) */}
+              {/* Profile Image (Shown after video ends, or toggled) */}
               <img
                 src={profileImage}
                 alt={name}
@@ -422,44 +471,6 @@ function Hero({ profile }) {
                   zIndex: 3,
                 }}
               />
-
-              {/* Subtle hover play hint when in profile picture mode */}
-              {currentMedia === "profile" && (
-                <div
-                  className="avatar-play-hint"
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    borderRadius: "50%",
-                    background: "rgba(3, 7, 18, 0.45)",
-                    backdropFilter: "blur(2px)",
-                    WebkitBackdropFilter: "blur(2px)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: 0,
-                    transition: "opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
-                    zIndex: 4,
-                    pointerEvents: "none",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "56px",
-                      height: "56px",
-                      borderRadius: "50%",
-                      background: "rgba(0, 245, 255, 0.2)",
-                      border: "1.5px solid #00f5ff",
-                      boxShadow: "0 0 25px rgba(0, 245, 255, 0.6)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Play size={24} fill="#00f5ff" color="#00f5ff" style={{ marginLeft: "3px" }} />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -468,10 +479,6 @@ function Hero({ profile }) {
       <style>{`
         :root {
           --avatar-size: 320px;
-        }
-
-        .profile-avatar-container:hover .avatar-play-hint {
-          opacity: 1 !important;
         }
 
         @keyframes spin-clockwise {
