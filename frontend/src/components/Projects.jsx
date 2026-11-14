@@ -81,7 +81,7 @@ function ProjectModal({ project, backendBase, onClose }) {
         }}
       >
         {/* Top neon accent */}
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, #00f5ff, #a855f7)", borderRadius: "20px 20px 0 0" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, #00f5ff, #38bdf8)", borderRadius: "20px 20px 0 0" }} />
 
         {/* Scrollable content */}
         <div style={{ overflowY: "auto", flex: 1 }}>
@@ -120,7 +120,7 @@ function ProjectModal({ project, backendBase, onClose }) {
             </button>
             {/* Featured badge */}
             {project.featured && (
-              <span style={{ position: "absolute", top: "14px", left: "14px", padding: "3px 12px", background: "linear-gradient(90deg, #00f5ff, #a855f7)", color: "#000", borderRadius: "20px", fontSize: "0.68rem", fontWeight: 800, textTransform: "uppercase" }}>
+              <span style={{ position: "absolute", top: "14px", left: "14px", padding: "3px 12px", background: "linear-gradient(90deg, #00f5ff, #38bdf8)", color: "#000", borderRadius: "20px", fontSize: "0.68rem", fontWeight: 800, textTransform: "uppercase" }}>
                 ★ Featured
               </span>
             )}
@@ -247,7 +247,7 @@ function ProjectCard({ project, backendBase, onOpenModal, cardIndex }) {
       ease: "power2.out",
     });
     if (glowRef.current) {
-      glowRef.current.style.background = `radial-gradient(ellipse at ${(x / rect.width) * 100}% ${(y / rect.height) * 100}%, rgba(0,245,255,0.12) 0%, rgba(168,85,247,0.08) 50%, transparent 80%)`;
+      glowRef.current.style.background = `radial-gradient(ellipse at ${(x / rect.width) * 100}% ${(y / rect.height) * 100}%, rgba(0,245,255,0.14) 0%, rgba(56,189,248,0.08) 50%, transparent 80%)`;
     }
   };
 
@@ -332,7 +332,7 @@ function ProjectCard({ project, backendBase, onOpenModal, cardIndex }) {
           />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(transparent 50%, rgba(8,11,18,0.95) 100%)" }} />
           {project.featured && (
-            <span className="shimmer-badge" style={{ position: "absolute", top: "12px", right: "12px", padding: "3px 12px", background: "linear-gradient(90deg, #00f5ff, #a855f7)", color: "#000", borderRadius: "20px", fontSize: "0.68rem", fontWeight: 800, textTransform: "uppercase" }}>
+            <span className="shimmer-badge" style={{ position: "absolute", top: "12px", right: "12px", padding: "3px 12px", background: "linear-gradient(90deg, #00f5ff, #38bdf8)", color: "#000", borderRadius: "20px", fontSize: "0.68rem", fontWeight: 800, textTransform: "uppercase" }}>
               ★ Featured
             </span>
           )}
@@ -457,7 +457,7 @@ function Projects({ projects }) {
       style={{ padding: "100px 5%", background: "transparent", position: "relative", borderTop: "1px solid rgba(255, 255, 255, 0.08)", overflow: "hidden" }}
     >
       {/* Ambient blob */}
-      <div style={{ position: "absolute", top: "20%", right: "-10%", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(168,85,247,0.04) 0%, transparent 70%)", filter: "blur(80px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: "20%", right: "-10%", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 70%)", filter: "blur(80px)", pointerEvents: "none" }} />
 
       <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
         {/* Header */}
@@ -465,7 +465,7 @@ function Projects({ projects }) {
           <SectionBadge text="My Work" />
           <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>
             Featured{" "}
-            <span style={{ background: "linear-gradient(135deg, #00f5ff, #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ background: "linear-gradient(135deg, #00f5ff, #38bdf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Projects
             </span>
           </h2>

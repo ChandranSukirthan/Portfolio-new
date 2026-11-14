@@ -85,7 +85,7 @@ function Hero({ profile }) {
                 display: "inline-block",
                 width: "32px",
                 height: "2px",
-                background: "linear-gradient(90deg, #00f5ff, #a855f7)",
+                background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
                 borderRadius: "2px",
               }}
             />
@@ -119,7 +119,7 @@ function Hero({ profile }) {
                 fontSize: "clamp(1.2rem, 2.5vw, 1.75rem)",
                 fontWeight: 600,
                 marginTop: "4px",
-                background: "linear-gradient(90deg, #00f5ff, #a855f7)",
+                background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -210,7 +210,7 @@ function Hero({ profile }) {
               width: "calc(var(--ring-size, 500px) * 0.85)",
               height: "calc(var(--ring-size, 500px) * 0.85)",
               borderRadius: "50%",
-              border: "1px dashed rgba(168, 85, 247, 0.2)",
+              border: "1px dashed rgba(56, 189, 248, 0.25)",
               animation: "spin-clockwise 18s linear infinite",
             }}
           />
@@ -247,9 +247,9 @@ function Hero({ profile }) {
               height: "var(--avatar-size, 320px)",
               borderRadius: "50%",
               padding: "4px",
-              background: "linear-gradient(135deg, #00f5ff 0%, #a855f7 100%)",
+              background: "linear-gradient(135deg, #00f5ff 0%, #38bdf8 50%, #1d4ed8 100%)",
               boxShadow:
-                "0 0 50px rgba(0, 245, 255, 0.25), 0 0 100px rgba(168, 85, 247, 0.15)",
+                "0 0 50px rgba(0, 245, 255, 0.25), 0 0 80px rgba(56, 189, 248, 0.2)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",

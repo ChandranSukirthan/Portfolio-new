@@ -123,7 +123,7 @@ function Navbar({ isDashboard = false }) {
                 width: "32px",
                 height: "32px",
                 borderRadius: "8px",
-                background: "linear-gradient(135deg, #00f5ff, #a855f7)",
+                background: "linear-gradient(135deg, #00f5ff, #38bdf8)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -214,7 +214,7 @@ function Navbar({ isDashboard = false }) {
                       left: 0,
                       width: "100%",
                       height: "2px",
-                      background: "linear-gradient(90deg, #00f5ff, #a855f7)",
+                      background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
                       borderRadius: "2px",
                       boxShadow: "0 0 8px rgba(0,245,255,0.6)",
                     }}
@@ -292,7 +292,7 @@ function Navbar({ isDashboard = false }) {
           left: 5%;
           right: 5%;
           height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(0,245,255,0.25), rgba(168,85,247,0.25), transparent);
+          background: linear-gradient(90deg, transparent, rgba(0,245,255,0.35), rgba(56,189,248,0.25), transparent);
           opacity: 0;
           transition: opacity 0.4s ease;
         }

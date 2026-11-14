@@ -91,7 +91,7 @@ function Portfolio() {
       <Navbar />
 
       {/* Background blobs */}
-      <div className="tech-blob blob-purple" style={{ top: "10%" }}></div>
+      <div className="tech-blob blob-blue" style={{ top: "10%" }}></div>
       <div className="tech-blob blob-cyan" style={{ bottom: "20%" }}></div>
 
       {/* ------------------------------------------------------------- */}
@@ -246,11 +246,11 @@ function Portfolio() {
                 <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "4px" }}>Acquired Skills</p>
               </div>
               <div className="glass-panel" style={{ padding: "24px", textAlign: "center" }}>
-                <h4 style={{ fontSize: "2.25rem", color: "#f472b6", fontWeight: 800 }}>{certificates.length}</h4>
+                <h4 style={{ fontSize: "2.25rem", color: "#38bdf8", fontWeight: 800 }}>{certificates.length}</h4>
                 <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "4px" }}>Certifications</p>
               </div>
               <div className="glass-panel" style={{ padding: "24px", textAlign: "center" }}>
-                <h4 style={{ fontSize: "2.25rem", color: "#fb7185", fontWeight: 800 }}>{experience.length + education.length}</h4>
+                <h4 style={{ fontSize: "2.25rem", color: "#00f5ff", fontWeight: 800 }}>{experience.length + education.length}</h4>
                 <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "4px" }}>Timeline Records</p>
               </div>
             </div>
@@ -275,7 +275,7 @@ function Portfolio() {
                 className="glass-panel" 
                 style={{ 
                   padding: "12px 28px", borderRadius: "30px", fontSize: "1.05rem", fontWeight: 600,
-                  border: "1px solid rgba(147, 51, 234, 0.15)", background: "rgba(147, 51, 234, 0.02)",
+                  border: "1px solid rgba(56, 189, 248, 0.18)", background: "rgba(56, 189, 248, 0.03)",
                   transition: "all 0.3s ease",
                   cursor: "default"
                 }}
@@ -286,7 +286,7 @@ function Portfolio() {
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "scale(1) translateY(0)";
-                  e.currentTarget.style.borderColor = "rgba(147, 51, 234, 0.15)";
+                  e.currentTarget.style.borderColor = "rgba(56, 189, 248, 0.18)";
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
@@ -465,7 +465,7 @@ function Portfolio() {
                       </span>
                     ))}
                     {item.technologies?.length > 4 && (
-                      <span style={{ fontSize: "0.75rem", padding: "2px 6px", color: "#a855f7" }}>+{item.technologies.length - 4} more</span>
+                      <span style={{ fontSize: "0.75rem", padding: "2px 6px", color: "#38bdf8" }}>+{item.technologies.length - 4} more</span>
                     )}
                   </div>
                 </div>

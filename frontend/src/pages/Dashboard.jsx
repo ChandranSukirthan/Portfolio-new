@@ -53,9 +53,9 @@ function Dashboard() {
   const statCards = [
     { label: "Total Projects", count: stats.projects, icon: Briefcase, color: "#3b82f6", path: "/admin/projects" },
     { label: "Work Experience", count: stats.experience, icon: Building2, color: "#f59e0b", path: "/admin/experience" },
-    { label: "Education History", count: stats.education, icon: GraduationCap, color: "#8b5cf6", path: "/admin/education" },
+    { label: "Education History", count: stats.education, icon: GraduationCap, color: "#38bdf8", path: "/admin/education" },
     { label: "Total Skills", count: stats.skills, icon: Code2, color: "#10b981", path: "/admin/skills" },
-    { label: "Total Achievements", count: stats.achievements, icon: Award, color: "#ec4899", path: "/admin/achievements" },
+    { label: "Total Achievements", count: stats.achievements, icon: Award, color: "#00f5ff", path: "/admin/achievements" },
     { label: "Total Messages", count: stats.messages, icon: Mail, color: "#ef4444", path: "/admin/messages" }
   ];
 

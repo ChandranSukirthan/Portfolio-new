@@ -259,7 +259,7 @@ function ManageProfile() {
           {loading ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "50px 0" }}>
               <div style={{
-                width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.1)", borderTop: "3px solid #9333ea", borderRadius: "50%", animation: "spin 0.8s linear infinite"
+                width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.1)", borderTop: "3px solid #00f5ff", borderRadius: "50%", animation: "spin 0.8s linear infinite"
               }}></div>
               <p style={{ marginTop: "15px", color: "#94a3b8" }}>Loading profile record...</p>
             </div>
@@ -289,8 +289,8 @@ function ManageProfile() {
 
                 {/* Resume Link field */}
                 <div className="glass-panel" style={{ padding: "20px", display: "flex", alignItems: "center", gap: "16px" }}>
-                  <div style={{ width: "64px", height: "64px", borderRadius: "8px", background: "rgba(147, 51, 234, 0.04)", border: "1px dashed rgba(147, 51, 234, 0.2)", display: "flex", justifyContent: "center", alignItems: "center", flexShrink: 0 }}>
-                    <FileText size={24} style={{ color: "#c084fc" }} />
+                  <div style={{ width: "64px", height: "64px", borderRadius: "8px", background: "rgba(56, 189, 248, 0.06)", border: "1px dashed rgba(56, 189, 248, 0.25)", display: "flex", justifyContent: "center", alignItems: "center", flexShrink: 0 }}>
+                    <FileText size={24} style={{ color: "#38bdf8" }} />
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Curriculum Vitae</span>

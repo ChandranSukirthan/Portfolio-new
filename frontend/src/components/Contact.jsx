@@ -191,18 +191,18 @@ function Contact({ contactInfo }) {
       label: "Phone",
       value: phone,
       href: `tel:${phone}`,
-      color: "#a855f7",
-      bg: "rgba(168,85,247,0.06)",
-      border: "rgba(168,85,247,0.15)",
+      color: "#38bdf8",
+      bg: "rgba(56,189,248,0.06)",
+      border: "rgba(56,189,248,0.15)",
     },
     {
       icon: <MapPin size={16} />,
       label: "Location",
       value: location,
       href: null,
-      color: "#f472b6",
-      bg: "rgba(244,114,182,0.06)",
-      border: "rgba(244,114,182,0.15)",
+      color: "#60a5fa",
+      bg: "rgba(96,165,250,0.06)",
+      border: "rgba(96,165,250,0.15)",
     },
   ];
 
@@ -229,7 +229,7 @@ function Contact({ contactInfo }) {
           height: "300px",
           borderRadius: "50%",
           background:
-            "radial-gradient(ellipse, rgba(0,245,255,0.04) 0%, rgba(168,85,247,0.03) 50%, transparent 80%)",
+            "radial-gradient(ellipse, rgba(0,245,255,0.05) 0%, rgba(56,189,248,0.04) 50%, transparent 80%)",
           filter: "blur(60px)",
           pointerEvents: "none",
         }}
@@ -243,7 +243,7 @@ function Contact({ contactInfo }) {
             Get In{" "}
             <span
               style={{
-                background: "linear-gradient(135deg, #00f5ff, #a855f7)",
+                background: "linear-gradient(135deg, #00f5ff, #38bdf8)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -295,7 +295,7 @@ function Contact({ contactInfo }) {
                 left: 0,
                 right: 0,
                 height: "2px",
-                background: "linear-gradient(90deg, #00f5ff, #a855f7)",
+                background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
                 borderRadius: "20px 20px 0 0",
               }}
             />
@@ -437,7 +437,7 @@ function Contact({ contactInfo }) {
                 left: 0,
                 right: 0,
                 height: "2px",
-                background: "linear-gradient(90deg, #a855f7, #00f5ff)",
+                background: "linear-gradient(90deg, #38bdf8, #00f5ff)",
                 borderRadius: "20px 20px 0 0",
               }}
             />

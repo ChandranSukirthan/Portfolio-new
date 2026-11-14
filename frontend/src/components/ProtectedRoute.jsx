@@ -53,7 +53,7 @@ function ProtectedRoute({ children }) {
           width: "40px",
           height: "40px",
           border: "4px solid rgba(255,255,255,0.1)",
-          borderTop: "4px solid #9333ea",
+          borderTop: "4px solid #00f5ff",
           borderRadius: "50%",
           animation: "spin 1s linear infinite",
           marginBottom: "15px"

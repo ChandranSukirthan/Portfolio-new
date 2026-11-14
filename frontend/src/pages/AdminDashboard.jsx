@@ -558,7 +558,7 @@ function AdminDashboard() {
                 <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "4px" }}>Modify your public personal details, profile avatar, and CV document.</p>
               </div>
 
-              <div className="glass-panel" style={{ padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid rgba(147, 51, 234, 0.3)", background: "rgba(147, 51, 234, 0.02)" }}>
+              <div className="glass-panel" style={{ padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid rgba(56, 189, 248, 0.25)", background: "rgba(56, 189, 248, 0.03)" }}>
                 <div>
                   <h4 style={{ fontWeight: 600, color: "#fff" }}>Homepage Core Profile Settings</h4>
                   <p style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "4px" }}>Edit Name, Greeting, Bio text, Email, and social URLs as requested.</p>
@@ -578,7 +578,7 @@ function AdminDashboard() {
                         <img 
                           src={profile.profileImage.startsWith("http") ? profile.profileImage : `${backendBase}${profile.profileImage}`} 
                           alt="Avatar" 
-                          style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "2px solid #a855f7" }}
+                          style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "2px solid #00f5ff" }}
                         />
                       ) : (
                         <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "rgba(255,255,255,0.04)", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -598,10 +598,10 @@ function AdminDashboard() {
 
                   <div className="glass-panel" style={{ padding: "20px", display: "flex", alignItems: "center", gap: "20px" }}>
                     <div style={{
-                      width: "80px", height: "80px", borderRadius: "12px", background: "rgba(147, 51, 234, 0.05)", 
-                      display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed rgba(147, 51, 234, 0.2)"
+                      width: "80px", height: "80px", borderRadius: "12px", background: "rgba(56, 189, 248, 0.06)", 
+                      display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed rgba(56, 189, 248, 0.25)"
                     }}>
-                      <FileText size={30} style={{ color: "#c084fc" }} />
+                      <FileText size={30} style={{ color: "#38bdf8" }} />
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>Curriculum Vitae (PDF)</span>
@@ -708,7 +708,7 @@ function AdminDashboard() {
                       className="glass-panel" 
                       style={{ 
                         padding: "8px 16px", borderRadius: "30px", display: "flex", alignItems: "center", gap: "10px", 
-                        border: "1px solid rgba(147, 51, 234, 0.2)", background: "rgba(147, 51, 234, 0.03)"
+                        border: "1px solid rgba(56, 189, 248, 0.25)", background: "rgba(56, 189, 248, 0.04)"
                       }}
                     >
                       <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>{skill}</span>
@@ -805,7 +805,7 @@ function AdminDashboard() {
                   {experience.map((item) => (
                     <div key={item._id} className="glass-panel" style={{ padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <div>
-                        <h4 style={{ fontSize: "1.05rem", fontWeight: 700 }}>{item.position} <span style={{ color: "#c084fc", fontWeight: 500 }}>@ {item.company}</span></h4>
+                        <h4 style={{ fontSize: "1.05rem", fontWeight: 700 }}>{item.position} <span style={{ color: "#38bdf8", fontWeight: 500 }}>@ {item.company}</span></h4>
                         <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "4px" }}>
                           {formatDateForInput(item.startDate)} — {item.current ? "Present" : formatDateForInput(item.endDate)} {item.location && `| ${item.location}`}
                         </p>
@@ -913,7 +913,7 @@ function AdminDashboard() {
                     <div key={item._id} className="glass-panel" style={{ padding: "20px", display: "flex", justifySide: "space-between", justifyContent: "space-between", alignItems: "flex-start" }}>
                       <div>
                         <h4 style={{ fontSize: "1.05rem", fontWeight: 700 }}>{item.degree} in {item.fieldOfStudy}</h4>
-                        <p style={{ fontSize: "0.85rem", color: "#c084fc", fontWeight: 500, marginTop: "4px" }}>{item.institution}</p>
+                        <p style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 500, marginTop: "4px" }}>{item.institution}</p>
                         <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "4px" }}>
                           {formatDateForInput(item.startDate)} — {item.current ? "Present" : formatDateForInput(item.endDate)} {item.grade && `| GPA: ${item.grade}`}
                         </p>
@@ -1184,7 +1184,7 @@ function AdminDashboard() {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <h4 style={{ fontSize: "1rem", fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.name}</h4>
-                        <p style={{ fontSize: "0.85rem", color: "#c084fc", fontWeight: 500, marginTop: "2px" }}>{item.issuer}</p>
+                        <p style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 500, marginTop: "2px" }}>{item.issuer}</p>
                         <p style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "2px" }}>
                           Issued: {formatDateForInput(item.issueDate)} {item.credentialId && `| ID: ${item.credentialId}`}
                         </p>

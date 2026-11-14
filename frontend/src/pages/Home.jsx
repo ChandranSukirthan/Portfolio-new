@@ -72,10 +72,10 @@ function Home() {
       positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = radius * Math.cos(phi);
 
-      // Mix cyan and purple
+      // Mix cyan and light/deep blue (pure blue tones, no red/purple)
       const mixRatio = Math.random();
-      colors[i * 3] = mixRatio * 0.66;       // R
-      colors[i * 3 + 1] = (1 - mixRatio) * 0.96 + mixRatio * 0.33; // G
+      colors[i * 3] = mixRatio * 0.04;       // R (negligible red, no purple)
+      colors[i * 3 + 1] = (1 - mixRatio) * 0.95 + mixRatio * 0.55; // G (cyan to light sky blue)
       colors[i * 3 + 2] = 1.0;              // B
     }
 
@@ -310,7 +310,7 @@ function Home() {
               borderRadius: "50%",
               border: "2px solid transparent",
               borderTopColor: "#00f5ff",
-              borderRightColor: "#a855f7",
+              borderRightColor: "#38bdf8",
               animation: "spin 0.9s linear infinite",
             }}
           />
@@ -397,7 +397,7 @@ function Home() {
             right: "15%",
             height: "1px",
             background:
-              "linear-gradient(90deg, transparent, rgba(0,245,255,0.2), rgba(168,85,247,0.2), transparent)",
+              "linear-gradient(90deg, transparent, rgba(0,245,255,0.25), rgba(56,189,248,0.2), transparent)",
           }}
         />
         <div
@@ -415,7 +415,7 @@ function Home() {
             © {new Date().getFullYear()}{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #00f5ff, #a855f7)",
+                background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",

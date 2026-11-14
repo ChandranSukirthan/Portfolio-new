@@ -49,7 +49,7 @@ function Login() {
       overflow: "hidden"
     }}>
       {/* Decorative Blobs */}
-      <div className="tech-blob blob-purple" style={{ top: "25%", left: "20%" }}></div>
+      <div className="tech-blob blob-blue" style={{ top: "25%", left: "20%" }}></div>
       <div className="tech-blob blob-cyan" style={{ bottom: "25%", right: "20%" }}></div>
 
       {/* Login Card */}
@@ -72,13 +72,13 @@ function Login() {
             width: "56px",
             height: "56px",
             borderRadius: "50%",
-            background: "rgba(147, 51, 234, 0.1)",
+            background: "rgba(0, 245, 255, 0.08)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            border: "1px solid rgba(147, 51, 234, 0.2)"
+            border: "1px solid rgba(0, 245, 255, 0.25)"
           }}>
-            <Shield style={{ width: "24px", height: "24px", color: "#a855f7" }} />
+            <Shield style={{ width: "24px", height: "24px", color: "#00f5ff" }} />
           </div>
           <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#fff", marginTop: "10px" }}>
             {isLogin ? "Admin Login" : "Initialize Admin"}

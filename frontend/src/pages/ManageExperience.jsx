@@ -560,7 +560,7 @@ function ManageExperience() {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 10px 20px; border-radius: 8px; border: none;
           cursor: pointer; font-size: 0.9rem; font-weight: 600;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          background: linear-gradient(135deg, #0284c7, #38bdf8);
           color: #fff; transition: opacity 0.2s;
         }
         .btn-primary:hover { opacity: 0.88; }

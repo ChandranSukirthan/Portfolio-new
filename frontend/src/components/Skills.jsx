@@ -256,7 +256,7 @@ function Skills({ skills }) {
     >
       {/* Ambient blobs */}
       <div style={{ position: "absolute", top: "15%", left: "-8%", width: "380px", height: "380px", borderRadius: "50%", background: "radial-gradient(circle, rgba(0,245,255,0.04) 0%, transparent 70%)", filter: "blur(70px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: "10%", right: "-8%", width: "420px", height: "420px", borderRadius: "50%", background: "radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 70%)", filter: "blur(80px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "10%", right: "-8%", width: "420px", height: "420px", borderRadius: "50%", background: "radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%)", filter: "blur(80px)", pointerEvents: "none" }} />
 
       <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
         {/* Header */}
@@ -264,7 +264,7 @@ function Skills({ skills }) {
           <SectionBadge text="Technical Expertise" />
           <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>
             Skills &amp;{" "}
-            <span style={{ background: "linear-gradient(135deg, #00f5ff, #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ background: "linear-gradient(135deg, #00f5ff, #38bdf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               Technologies
             </span>
           </h2>
@@ -288,7 +288,7 @@ function Skills({ skills }) {
           >
             {[
               { label: "Total Skills", value: totalSkills, color: "#00f5ff" },
-              { label: "Categories", value: categoryKeys.length, color: "#a855f7" },
+              { label: "Categories", value: categoryKeys.length, color: "#38bdf8" },
               { label: "Expert+", value: skills?.filter((s) => s.level === "Expert" || s.level === "Master" || s.level === "Advanced").length || 0, color: "#f59e0b" },
             ].map((stat) => (
               <div
