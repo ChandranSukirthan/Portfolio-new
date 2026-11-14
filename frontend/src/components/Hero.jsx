@@ -1,6 +1,8 @@
-import { ArrowRight, Download } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ArrowRight, Download, Sparkles } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
+import { gsap } from "gsap";
 
 function Hero({ profile }) {
   // Fallbacks
@@ -28,6 +30,77 @@ function Hero({ profile }) {
       : `${backendBase}${profile.cv}`
     : "#";
 
+  // 3D Avatar Video source (user uploaded 3D video placed in /profile-3d.mp4)
+  const avatarVideo = profile?.profileVideo || "/profile-3d.mp4";
+
+  const avatarContainerRef = useRef(null);
+  const avatarWrapperRef = useRef(null);
+  const ringsRef = useRef(null);
+  const videoRef = useRef(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // 3D Entrance Animation: Starts from "outer" space and swoops inside to the profile image spot
+  useEffect(() => {
+    if (avatarWrapperRef.current) {
+      gsap.fromTo(
+        avatarWrapperRef.current,
+        {
+          scale: 2.4,
+          z: 500,
+          opacity: 0,
+          rotationY: -45,
+          rotationX: 30,
+          filter: "blur(20px) drop-shadow(0 0 70px rgba(0, 245, 255, 0.9))",
+        },
+        {
+          scale: 1,
+          z: 0,
+          opacity: 1,
+          rotationY: 0,
+          rotationX: 0,
+          filter: "blur(0px) drop-shadow(0 0 35px rgba(0, 245, 255, 0.3))",
+          duration: 1.8,
+          ease: "power3.out",
+          delay: 0.35,
+        }
+      );
+    }
+
+    if (ringsRef.current) {
+      gsap.fromTo(
+        ringsRef.current,
+        {
+          scale: 3.2,
+          opacity: 0,
+          rotation: -180,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 2.2,
+          ease: "expo.out",
+          delay: 0.15,
+        }
+      );
+    }
+  }, []);
+
+  // Interactive 3D tilt tracking with mouse movement
+  const handleMouseMove = (e) => {
+    if (!avatarContainerRef.current) return;
+    const rect = avatarContainerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMousePos({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePos({ x: 0, y: 0 });
+  };
+
   const scrollToContact = () => {
     const el = document.getElementById("contact");
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -46,7 +119,6 @@ function Hero({ profile }) {
         overflow: "hidden",
       }}
     >
-
       {/* Radial gradient overlay for readability */}
       <div
         style={{
@@ -180,94 +252,206 @@ function Hero({ profile }) {
           </div>
         </div>
 
-        {/* Right Side: Profile Image with animated rings */}
+        {/* Right Side: 3D Animated Video Profile Avatar */}
         <div
+          ref={avatarContainerRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
           style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
             height: "var(--ring-size, 500px)",
+            perspective: "1200px",
+            cursor: "grab",
           }}
           className="hero-image-side"
         >
-          {/* Outer orbit ring */}
+          {/* Animated Cosmic Rings Group */}
           <div
+            ref={ringsRef}
             style={{
               position: "absolute",
-              width: "var(--ring-size, 500px)",
-              height: "var(--ring-size, 500px)",
-              borderRadius: "50%",
-              border: "1px solid rgba(0, 245, 255, 0.12)",
-              animation: "spin-counterclockwise 25s linear infinite",
-            }}
-          />
-
-          {/* Dashed middle ring */}
-          <div
-            style={{
-              position: "absolute",
-              width: "calc(var(--ring-size, 500px) * 0.85)",
-              height: "calc(var(--ring-size, 500px) * 0.85)",
-              borderRadius: "50%",
-              border: "1px dashed rgba(56, 189, 248, 0.25)",
-              animation: "spin-clockwise 18s linear infinite",
-            }}
-          />
-
-          {/* Orbiting dot */}
-          <div
-            style={{
-              position: "absolute",
-              width: "var(--ring-size, 500px)",
-              height: "var(--ring-size, 500px)",
-              borderRadius: "50%",
-              animation: "spin-clockwise 8s linear infinite",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                top: "6px",
-                left: "50%",
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "#00f5ff",
-                boxShadow: "0 0 12px #00f5ff, 0 0 24px rgba(0,245,255,0.5)",
-                transform: "translateX(-50%)",
-              }}
-            />
-          </div>
-
-          {/* Avatar */}
-          <div
-            style={{
-              width: "var(--avatar-size, 320px)",
-              height: "var(--avatar-size, 320px)",
-              borderRadius: "50%",
-              padding: "4px",
-              background: "linear-gradient(135deg, #00f5ff 0%, #38bdf8 50%, #1d4ed8 100%)",
-              boxShadow:
-                "0 0 50px rgba(0, 245, 255, 0.25), 0 0 80px rgba(56, 189, 248, 0.2)",
+              inset: 0,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              zIndex: 2,
+              pointerEvents: "none",
             }}
-            className="profile-avatar-container"
           >
-            <img
-              src={profileImage}
-              alt={name}
+            {/* Outer orbit ring */}
+            <div
               style={{
-                width: "100%",
-                height: "100%",
+                position: "absolute",
+                width: "var(--ring-size, 500px)",
+                height: "var(--ring-size, 500px)",
                 borderRadius: "50%",
-                objectFit: "cover",
-                border: "4px solid #030712",
+                border: "1.5px solid rgba(0, 245, 255, 0.16)",
+                boxShadow: "0 0 25px rgba(0, 245, 255, 0.08) inset",
+                animation: "spin-counterclockwise 25s linear infinite",
               }}
             />
+
+            {/* Dashed middle ring */}
+            <div
+              style={{
+                position: "absolute",
+                width: "calc(var(--ring-size, 500px) * 0.85)",
+                height: "calc(var(--ring-size, 500px) * 0.85)",
+                borderRadius: "50%",
+                border: "1.5px dashed rgba(56, 189, 248, 0.28)",
+                animation: "spin-clockwise 18s linear infinite",
+              }}
+            />
+
+            {/* Orbiting celestial beacon */}
+            <div
+              style={{
+                position: "absolute",
+                width: "var(--ring-size, 500px)",
+                height: "var(--ring-size, 500px)",
+                borderRadius: "50%",
+                animation: "spin-clockwise 8s linear infinite",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: "6px",
+                  left: "50%",
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  background: "#00f5ff",
+                  boxShadow: "0 0 14px #00f5ff, 0 0 28px rgba(0,245,255,0.6)",
+                  transform: "translateX(-50%)",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* 3D Avatar Video Wrapper with Dynamic Tilt & Floating Animation */}
+          <div
+            ref={avatarWrapperRef}
+            className="avatar-3d-interactive"
+            style={{
+              transform: `perspective(1000px) rotateY(${mousePos.x * 12}deg) rotateX(${-mousePos.y * 12}deg) translateZ(${Math.abs(mousePos.x) * 8}px)`,
+              transition: "transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1)",
+              transformStyle: "preserve-3d",
+              position: "relative",
+              zIndex: 3,
+            }}
+          >
+            {/* Circular Avatar Shell with Dark & Light Blue Neon Borders */}
+            <div
+              style={{
+                width: "var(--avatar-size, 320px)",
+                height: "var(--avatar-size, 320px)",
+                borderRadius: "50%",
+                padding: "5px",
+                background: "linear-gradient(135deg, #00f5ff 0%, #38bdf8 50%, #1d4ed8 100%)",
+                boxShadow:
+                  "0 0 50px rgba(0, 245, 255, 0.35), 0 0 90px rgba(56, 189, 248, 0.25)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "relative",
+                overflow: "hidden",
+              }}
+              className="profile-avatar-container"
+            >
+              {/* HTML5 3D Animated Video Element */}
+              <video
+                ref={videoRef}
+                src={avatarVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster={profileImage}
+                onLoadedData={() => setVideoLoaded(true)}
+                onError={() => setVideoError(true)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  objectPosition: "center center",
+                  border: "4px solid #030712",
+                  background: "#030712",
+                  display: videoError ? "none" : "block",
+                }}
+              />
+
+              {/* Fallback image if video fails to load */}
+              {videoError && (
+                <img
+                  src={profileImage}
+                  alt={name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "4px solid #030712",
+                  }}
+                />
+              )}
+
+              {/* Subtle glass reflection overlay */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: "50%",
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%, rgba(0,245,255,0.08) 100%)",
+                  pointerEvents: "none",
+                }}
+              />
+            </div>
+
+            {/* 3D Hologram Badge Below Avatar */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "-14px",
+                left: "50%",
+                transform: "translateX(-50%) translateZ(30px)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "6px 16px",
+                background: "rgba(3, 7, 18, 0.92)",
+                border: "1px solid rgba(0, 245, 255, 0.35)",
+                borderRadius: "30px",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.6), 0 0 16px rgba(0,245,255,0.25)",
+                backdropFilter: "blur(12px)",
+                color: "#00f5ff",
+                fontSize: "0.74rem",
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+                pointerEvents: "none",
+                zIndex: 5,
+              }}
+            >
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: "#00f5ff",
+                  boxShadow: "0 0 8px #00f5ff",
+                  animation: "pulse-dot 1.5s infinite ease-in-out",
+                }}
+              />
+              <Sparkles size={12} style={{ color: "#38bdf8" }} />
+              <span>3D Live Avatar</span>
+            </div>
           </div>
         </div>
       </div>
@@ -275,7 +459,7 @@ function Hero({ profile }) {
       <style>{`
         :root {
           --avatar-size: 320px;
-          --ring-size: 440px;
+          --ring-size: 460px;
         }
 
         @keyframes spin-clockwise {
@@ -285,6 +469,24 @@ function Hero({ profile }) {
         @keyframes spin-counterclockwise {
           from { transform: rotate(0deg); }
           to { transform: rotate(-360deg); }
+        }
+
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .avatar-3d-interactive {
+          animation: avatar-float 5s ease-in-out infinite alternate;
+        }
+
+        @keyframes avatar-float {
+          0% {
+            transform: translateY(0px) rotateZ(0deg);
+          }
+          100% {
+            transform: translateY(-10px) rotateZ(1deg);
+          }
         }
 
         .scroll-indicator {
@@ -312,7 +514,7 @@ function Hero({ profile }) {
         }
 
         @media (max-width: 1024px) {
-          :root { --avatar-size: 260px; --ring-size: 340px; }
+          :root { --avatar-size: 260px; --ring-size: 360px; }
         }
         @media (max-width: 900px) {
           .hero-grid {
@@ -325,7 +527,7 @@ function Hero({ profile }) {
           .hero-text-side > div { justify-content: center !important; }
         }
         @media (max-width: 480px) {
-          :root { --avatar-size: 200px; --ring-size: 260px; }
+          :root { --avatar-size: 210px; --ring-size: 280px; }
         }
       `}</style>
     </section>
