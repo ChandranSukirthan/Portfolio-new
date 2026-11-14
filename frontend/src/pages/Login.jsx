@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/api";
-import { Shield, Mail, Lock, LogIn, UserPlus } from "lucide-react";
+import { Shield, Mail, Lock, LogIn, UserPlus, ArrowLeft } from "lucide-react";
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -48,6 +48,37 @@ function Login() {
       background: "radial-gradient(circle at center, #0f0d22 0%, #080710 100%)",
       overflow: "hidden"
     }}>
+      {/* Back to Portfolio Button on the left side */}
+      <button
+        onClick={() => navigate("/")}
+        className="login-back-btn"
+        title="Back to Portfolio"
+        style={{
+          position: "fixed",
+          top: "28px",
+          left: "28px",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "8px",
+          padding: "10px 18px",
+          background: "rgba(8, 11, 20, 0.85)",
+          border: "1px solid rgba(0, 245, 255, 0.3)",
+          borderRadius: "24px",
+          color: "#00f5ff",
+          fontSize: "0.85rem",
+          fontWeight: 600,
+          cursor: "pointer",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          boxShadow: "0 4px 18px rgba(0, 245, 255, 0.12)",
+          zIndex: 100,
+          transition: "all 0.25s ease",
+        }}
+      >
+        <ArrowLeft size={16} />
+        <span>Back to Portfolio</span>
+      </button>
+
       {/* Decorative Blobs */}
       <div className="tech-blob blob-blue" style={{ top: "25%", left: "20%" }}></div>
       <div className="tech-blob blob-cyan" style={{ bottom: "25%", right: "20%" }}></div>
@@ -210,6 +241,20 @@ function Login() {
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        .login-back-btn:hover {
+          background: rgba(0, 245, 255, 0.15) !important;
+          border-color: #00f5ff !important;
+          box-shadow: 0 0 24px rgba(0, 245, 255, 0.35) !important;
+          transform: translateX(-3px);
+        }
+        @media (max-width: 600px) {
+          .login-back-btn {
+            top: 16px !important;
+            left: 16px !important;
+            padding: 8px 14px !important;
+            font-size: 0.8rem !important;
+          }
         }
       `}</style>
     </div>

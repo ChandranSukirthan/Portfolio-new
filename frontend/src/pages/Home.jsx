@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { ArrowUp } from "lucide-react";
 import API from "../api/api";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
@@ -23,6 +24,7 @@ function Home() {
   const [achievements, setAchievements] = useState([]);
   const [contactInfo, setContactInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const cursorDotRef = useRef(null);
   const cursorTrailRef = useRef(null);
 
@@ -294,10 +296,20 @@ function Home() {
     initCustomCursor();
     initRevealObserver();
 
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const loadPublicData = async () => {
     setLoading(true);
@@ -576,6 +588,39 @@ function Home() {
           </span>
         </div>
       </footer>
+
+      {/* Scroll to Top Button (Right side bottom) */}
+      <button
+        onClick={scrollToTop}
+        className="scroll-to-top-btn"
+        title="Scroll to top"
+        aria-label="Scroll to top"
+        style={{
+          position: "fixed",
+          bottom: "32px",
+          right: "32px",
+          width: "48px",
+          height: "48px",
+          borderRadius: "50%",
+          background: "rgba(8, 11, 20, 0.9)",
+          border: "1.5px solid rgba(0, 245, 255, 0.4)",
+          boxShadow: "0 0 20px rgba(0, 245, 255, 0.25), 0 8px 24px rgba(0, 0, 0, 0.6)",
+          color: "#00f5ff",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          zIndex: 999,
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          opacity: showScrollTop ? 1 : 0,
+          transform: showScrollTop ? "scale(1) translateY(0)" : "scale(0.7) translateY(18px)",
+          pointerEvents: showScrollTop ? "auto" : "none",
+          transition: "opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
+        }}
+      >
+        <ArrowUp size={22} strokeWidth={2.5} />
+      </button>
     </div>
   );
 }
