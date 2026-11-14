@@ -136,17 +136,6 @@ function Hero({ profile }) {
     setMousePos({ x: 0, y: 0 });
   };
 
-  // Clicking avatar ensures audio is active or plays
-  const handleAvatarClick = () => {
-    if (videoRef.current) {
-      videoRef.current.volume = 1.0;
-      videoRef.current.muted = false;
-      if (videoRef.current.paused) {
-        videoRef.current.play().catch(() => {});
-      }
-    }
-  };
-
   const scrollToContact = () => {
     const el = document.getElementById("contact");
     if (el) el.scrollIntoView({ behavior: "smooth" });
