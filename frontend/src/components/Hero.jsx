@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Download, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Download, Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
 import { gsap } from "gsap";
@@ -32,6 +32,7 @@ function Hero({ profile }) {
 
   const avatarContainerRef = useRef(null);
   const avatarWrapperRef = useRef(null);
+  const ringsRef = useRef(null);
   const videoRef = useRef(null);
   const timerRef = useRef(null);
 
@@ -48,6 +49,7 @@ function Hero({ profile }) {
       setCurrentMedia("video");
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
+        videoRef.current.volume = 1.0;
         videoRef.current.muted = false;
         setIsMuted(false);
         videoRef.current.play().catch((err) => {
@@ -59,6 +61,7 @@ function Hero({ profile }) {
 
   // 3D Entrance Animation & Audio Autoplay setup
   useEffect(() => {
+    // 3D entrance for Avatar
     if (avatarWrapperRef.current) {
       gsap.fromTo(
         avatarWrapperRef.current,
@@ -82,9 +85,30 @@ function Hero({ profile }) {
       );
     }
 
-    // Play video with audio
+    // 3D entrance for 3 Outer Rings
+    if (ringsRef.current) {
+      gsap.fromTo(
+        ringsRef.current,
+        {
+          scale: 2.2,
+          opacity: 0,
+          rotation: -120,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.8,
+          ease: "expo.out",
+          delay: 0.1,
+        }
+      );
+    }
+
+    // Start video playback with audio
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
+      videoRef.current.volume = 1.0;
       videoRef.current.muted = false;
       videoRef.current
         .play()
@@ -101,23 +125,25 @@ function Hero({ profile }) {
         });
     }
 
-    // Unmute on first user click/touch anywhere on the page
+    // Unmute immediately on ANY first user interaction across the page
     const unlockAudio = () => {
       if (videoRef.current) {
         videoRef.current.muted = false;
+        videoRef.current.volume = 1.0;
         setIsMuted(false);
       }
     };
 
-    window.addEventListener("click", unlockAudio, { once: true });
-    window.addEventListener("touchstart", unlockAudio, { once: true });
-    window.addEventListener("keydown", unlockAudio, { once: true });
+    const events = ["click", "touchstart", "pointerdown", "keydown", "wheel"];
+    events.forEach((evt) => {
+      window.addEventListener(evt, unlockAudio, { once: true, passive: true });
+    });
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      window.removeEventListener("click", unlockAudio);
-      window.removeEventListener("touchstart", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
+      events.forEach((evt) => {
+        window.removeEventListener(evt, unlockAudio);
+      });
     };
   }, []);
 
@@ -134,22 +160,32 @@ function Hero({ profile }) {
     setMousePos({ x: 0, y: 0 });
   };
 
+  // Toggle Mute / Unmute and ensure audio plays with full volume
   const toggleMute = (e) => {
     e?.stopPropagation();
     if (!videoRef.current) return;
     const nextMuted = !videoRef.current.muted;
+    videoRef.current.volume = 1.0;
     videoRef.current.muted = nextMuted;
     setIsMuted(nextMuted);
+    if (!nextMuted && videoRef.current.paused) {
+      videoRef.current.play().catch(() => {});
+    }
   };
 
-  const replayVideoNow = () => {
+  // Manually replay video with sound immediately
+  const playVideoWithSound = (e) => {
+    e?.stopPropagation();
     if (timerRef.current) clearTimeout(timerRef.current);
     setCurrentMedia("video");
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
+      videoRef.current.volume = 1.0;
       videoRef.current.muted = false;
       setIsMuted(false);
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch((err) => {
+        console.warn("Play error:", err);
+      });
     }
   };
 
@@ -276,12 +312,44 @@ function Hero({ profile }) {
               <ArrowRight size={16} />
             </button>
 
+            {/* Play/Unmute Intro Video with Sound button */}
+            <button
+              onClick={playVideoWithSound}
+              className="btn-secondary"
+              style={{
+                padding: "14px 24px",
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                borderColor: !isMuted && currentMedia === "video" ? "#00f5ff" : "rgba(0, 245, 255, 0.4)",
+                background: !isMuted && currentMedia === "video" ? "rgba(0, 245, 255, 0.12)" : "rgba(3, 7, 18, 0.6)",
+                boxShadow: !isMuted && currentMedia === "video" ? "0 0 20px rgba(0, 245, 255, 0.3)" : "none",
+                color: "#00f5ff",
+                transition: "all 0.3s ease",
+              }}
+              title="Play 3D video with sound"
+            >
+              {currentMedia === "video" && !isMuted ? (
+                <>
+                  <Volume2 size={17} color="#00f5ff" />
+                  <span>Audio Playing 🔊</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 size={17} color="#00f5ff" />
+                  <span>Play with Sound 🔊</span>
+                </>
+              )}
+            </button>
+
             {resumeLink !== "#" && (
               <button
                 onClick={() => downloadFile(resumeLink, "Sukirthan_Resume.pdf")}
                 className="btn-secondary"
                 style={{
-                  padding: "14px 32px",
+                  padding: "14px 28px",
                   fontSize: "0.95rem",
                   cursor: "pointer",
                   display: "inline-flex",
@@ -291,27 +359,6 @@ function Hero({ profile }) {
               >
                 <Download size={16} />
                 <span>Download Resume</span>
-              </button>
-            )}
-
-            {currentMedia === "profile" && (
-              <button
-                onClick={replayVideoNow}
-                className="btn-secondary"
-                style={{
-                  padding: "14px 22px",
-                  fontSize: "0.95rem",
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  borderColor: "rgba(0, 245, 255, 0.4)",
-                  color: "#00f5ff",
-                }}
-                title="Play 3D video again now"
-              >
-                <Volume2 size={16} />
-                <span>Replay Video 🔊</span>
               </button>
             )}
           </div>
@@ -332,7 +379,7 @@ function Hero({ profile }) {
           </div>
         </div>
 
-        {/* Right Side: Clean 3D Avatar (Video -> Profile Image -> 30s Loop) */}
+        {/* Right Side: 3 Outer Circles & 3D Interactive Avatar */}
         <div
           ref={avatarContainerRef}
           onMouseMove={handleMouseMove}
@@ -342,10 +389,74 @@ function Hero({ profile }) {
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
+            height: "var(--ring-size, 470px)",
             perspective: "1200px",
           }}
           className="hero-image-side"
         >
+          {/* Animated Cosmic Rings Group (3 outer circles) */}
+          <div
+            ref={ringsRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              pointerEvents: "none",
+            }}
+          >
+            {/* Circle 1: Outer solid orbit ring */}
+            <div
+              style={{
+                position: "absolute",
+                width: "var(--ring-size, 470px)",
+                height: "var(--ring-size, 470px)",
+                borderRadius: "50%",
+                border: "1.5px solid rgba(0, 245, 255, 0.18)",
+                boxShadow: "0 0 25px rgba(0, 245, 255, 0.08) inset",
+                animation: "spin-counterclockwise 25s linear infinite",
+              }}
+            />
+
+            {/* Circle 2: Dashed middle ring */}
+            <div
+              style={{
+                position: "absolute",
+                width: "calc(var(--ring-size, 470px) * 0.85)",
+                height: "calc(var(--ring-size, 470px) * 0.85)",
+                borderRadius: "50%",
+                border: "1.5px dashed rgba(56, 189, 248, 0.32)",
+                animation: "spin-clockwise 18s linear infinite",
+              }}
+            />
+
+            {/* Circle 3: Orbiting celestial beacon path & glowing dot */}
+            <div
+              style={{
+                position: "absolute",
+                width: "var(--ring-size, 470px)",
+                height: "var(--ring-size, 470px)",
+                borderRadius: "50%",
+                animation: "spin-clockwise 8s linear infinite",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: "6px",
+                  left: "50%",
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  background: "#00f5ff",
+                  boxShadow: "0 0 14px #00f5ff, 0 0 28px rgba(0,245,255,0.7)",
+                  transform: "translateX(-50%)",
+                }}
+              />
+            </div>
+          </div>
+
           {/* 3D Profile Avatar Wrapper with Dynamic Tilt & Float */}
           <div
             ref={avatarWrapperRef}
@@ -358,11 +469,11 @@ function Hero({ profile }) {
               zIndex: 3,
             }}
           >
-            {/* Clean Circular Shell with Dark & Light Blue Neon Borders (No outer rings!) */}
+            {/* Center Circular Shell with Dark & Light Blue Neon Borders */}
             <div
               style={{
-                width: "var(--avatar-size, 340px)",
-                height: "var(--avatar-size, 340px)",
+                width: "var(--avatar-size, 320px)",
+                height: "var(--avatar-size, 320px)",
                 borderRadius: "50%",
                 padding: "5px",
                 background: "linear-gradient(135deg, #00f5ff 0%, #38bdf8 50%, #1d4ed8 100%)",
@@ -376,13 +487,8 @@ function Hero({ profile }) {
                 cursor: "pointer",
               }}
               className="profile-avatar-container"
-              onClick={() => {
-                if (videoRef.current && isMuted) {
-                  videoRef.current.muted = false;
-                  setIsMuted(false);
-                }
-              }}
-              title={isMuted ? "Click to unmute audio" : name}
+              onClick={toggleMute}
+              title={isMuted ? "Click to hear audio" : "Click to mute"}
             >
               {/* 3D Animated Character Video */}
               <video
@@ -439,33 +545,67 @@ function Hero({ profile }) {
                 }}
               />
 
-              {/* Discreet Mute/Unmute toggle indicator (sound controls) */}
+              {/* Discreet Audio Pill Toggle (shows directly on avatar) */}
               {currentMedia === "video" && (
                 <button
                   onClick={toggleMute}
                   style={{
                     position: "absolute",
                     bottom: "16px",
-                    background: "rgba(3, 7, 18, 0.8)",
+                    background: isMuted
+                      ? "linear-gradient(135deg, rgba(0, 245, 255, 0.95), rgba(56, 189, 248, 0.95))"
+                      : "rgba(3, 7, 18, 0.85)",
+                    backdropFilter: "blur(8px)",
+                    border: isMuted ? "1.5px solid #00f5ff" : "1px solid rgba(0, 245, 255, 0.4)",
+                    borderRadius: "9999px",
+                    padding: "6px 14px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    color: isMuted ? "#030712" : "#00f5ff",
+                    fontSize: "0.78rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    zIndex: 4,
+                    boxShadow: isMuted
+                      ? "0 0 16px rgba(0, 245, 255, 0.6)"
+                      : "0 2px 10px rgba(0,0,0,0.5)",
+                    transition: "all 0.25s ease",
+                  }}
+                  title={isMuted ? "Click to unmute and hear audio" : "Audio playing (click to mute)"}
+                >
+                  {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                  <span>{isMuted ? "Tap to Hear Audio 🔊" : "Sound On"}</span>
+                </button>
+              )}
+
+              {/* In profile image mode: quick replay icon */}
+              {currentMedia === "profile" && (
+                <button
+                  onClick={playVideoWithSound}
+                  style={{
+                    position: "absolute",
+                    bottom: "16px",
+                    background: "rgba(3, 7, 18, 0.85)",
                     backdropFilter: "blur(8px)",
                     border: "1px solid rgba(0, 245, 255, 0.4)",
                     borderRadius: "9999px",
-                    padding: "5px 12px",
+                    padding: "6px 14px",
                     display: "flex",
                     alignItems: "center",
-                    gap: "5px",
-                    color: isMuted ? "#94a3b8" : "#00f5ff",
-                    fontSize: "0.75rem",
+                    gap: "6px",
+                    color: "#00f5ff",
+                    fontSize: "0.78rem",
                     fontWeight: 600,
                     cursor: "pointer",
                     zIndex: 4,
                     boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                    transition: "all 0.2s ease",
+                    transition: "all 0.25s ease",
                   }}
-                  title={isMuted ? "Click to enable audio" : "Audio playing"}
+                  title="Replay video now with sound"
                 >
-                  {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
-                  <span>{isMuted ? "Unmute" : "Sound On"}</span>
+                  <RotateCcw size={13} />
+                  <span>Replay Video</span>
                 </button>
               )}
             </div>
@@ -475,7 +615,17 @@ function Hero({ profile }) {
 
       <style>{`
         :root {
-          --avatar-size: 340px;
+          --avatar-size: 320px;
+          --ring-size: 470px;
+        }
+
+        @keyframes spin-clockwise {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes spin-counterclockwise {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(-360deg); }
         }
 
         .avatar-3d-interactive {
@@ -516,7 +666,7 @@ function Hero({ profile }) {
         }
 
         @media (max-width: 1024px) {
-          :root { --avatar-size: 280px; }
+          :root { --avatar-size: 260px; --ring-size: 380px; }
         }
         @media (max-width: 900px) {
           .hero-grid {
@@ -529,7 +679,7 @@ function Hero({ profile }) {
           .hero-text-side > div { justify-content: center !important; }
         }
         @media (max-width: 480px) {
-          :root { --avatar-size: 240px; }
+          :root { --avatar-size: 210px; --ring-size: 290px; }
         }
       `}</style>
     </section>
