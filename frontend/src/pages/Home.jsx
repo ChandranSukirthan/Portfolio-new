@@ -220,8 +220,8 @@ function Home() {
       // 3D camera travel based on scroll + mouse parallax
       const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
       const scrollFraction = Math.min(1, Math.max(0, scrollY / maxScroll));
-      const targetZ = 5 - scrollFraction * 1.8;
-      const targetY = mouseRef.current.y * 0.6 - scrollFraction * 2.2;
+      const targetZ = 5 - scrollFraction * 3.2;
+      const targetY = mouseRef.current.y * 0.6 - scrollFraction * 2.8;
 
       camera.position.x += (mouseRef.current.x * 0.9 - camera.position.x) * 0.04;
       camera.position.y += (targetY - camera.position.y) * 0.04;
@@ -262,33 +262,76 @@ function Home() {
     };
   }, []);
 
-  // ── 3D Space Receding Scroll Animation ───────────────────────
-  // When scrolling past each section, it physically moves backward/behind into 3D cosmic space
+  // ── 3D Cosmic Space Page-to-Page Travel Animation ─────────────────────
+  // When moving to the next section ("page"), the current section recedes
+  // deep backward into 3D cosmic space (Z-axis depth, scale down, blur & fade),
+  // while the next section advances forward into view.
   useEffect(() => {
     if (loading) return;
 
     const timer = setTimeout(() => {
-      const sections = document.querySelectorAll("section");
-      sections.forEach((sec) => {
-        gsap.to(sec, {
-          scrollTrigger: {
-            trigger: sec,
-            start: "bottom 92%",
-            end: "bottom 15%",
-            scrub: 0.8,
-          },
-          scale: 0.88,
-          z: -300,
-          rotateX: 7,
-          opacity: 0.28,
-          filter: "blur(3px)",
-          transformOrigin: "center top",
-          transformPerspective: 1200,
-          ease: "power2.inOut",
-        });
+      const sections = Array.from(document.querySelectorAll("section"));
+      if (!sections.length) return;
+
+      sections.forEach((sec, idx) => {
+        // Layer sections so incoming sections sit in front of receding sections
+        sec.style.position = "relative";
+        sec.style.zIndex = `${idx + 1}`;
+        sec.style.transformOrigin = "center center";
+
+        // Outgoing section: moves backward into space as user moves to the next page
+        if (idx < sections.length - 1) {
+          const isSingleScreen = sec.offsetHeight <= window.innerHeight * 1.15;
+          const startPoint = isSingleScreen ? "top top" : "bottom bottom";
+
+          gsap.to(sec, {
+            scrollTrigger: {
+              trigger: sec,
+              start: startPoint,
+              end: "bottom top",
+              scrub: 0.7,
+              invalidateOnRefresh: true,
+            },
+            scale: 0.52,
+            z: -950,
+            y: () => window.innerHeight * 0.38,
+            rotateX: 14,
+            opacity: 0,
+            filter: "blur(10px)",
+            transformPerspective: 1200,
+            ease: "none",
+          });
+        }
+
+        // Incoming section: advances forward from depth into crisp focus
+        if (idx > 0) {
+          gsap.fromTo(
+            sec,
+            {
+              scale: 0.92,
+              z: -300,
+              opacity: 0.45,
+            },
+            {
+              scrollTrigger: {
+                trigger: sec,
+                start: "top bottom",
+                end: "top 40%",
+                scrub: 0.7,
+                invalidateOnRefresh: true,
+              },
+              scale: 1,
+              z: 0,
+              opacity: 1,
+              transformPerspective: 1200,
+              ease: "none",
+            }
+          );
+        }
       });
+
       ScrollTrigger.refresh();
-    }, 300);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [loading]);
