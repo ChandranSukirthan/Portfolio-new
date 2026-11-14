@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Download, Volume2, VolumeX, Play, Sparkles, X } from "lucide-react";
+import { ArrowRight, Download, Volume2, VolumeX } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
 import { gsap } from "gsap";
@@ -32,93 +32,93 @@ function Hero({ profile }) {
 
   const avatarContainerRef = useRef(null);
   const avatarWrapperRef = useRef(null);
-  const ringsRef = useRef(null);
-  const audioRef = useRef(null);
-  const modalVideoRef = useRef(null);
+  const videoRef = useRef(null);
+  const timerRef = useRef(null);
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [currentMedia, setCurrentMedia] = useState("video"); // "video" | "profile"
+  const [isMuted, setIsMuted] = useState(false);
 
-  // Toggle Intro Voice Audio Playback
-  const toggleAudio = () => {
-    if (!audioRef.current) return;
-    if (isPlayingAudio) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    } else {
-      if (modalVideoRef.current && !modalVideoRef.current.paused) {
-        modalVideoRef.current.pause();
-      }
-      audioRef.current
-        .play()
-        .then(() => {
-          setIsPlayingAudio(true);
-        })
-        .catch((err) => {
-          console.error("Audio playback error:", err);
+  // Video ended -> Switch to Profile Pic for 30s -> Automatically replay video with audio
+  const handleVideoEnded = () => {
+    setCurrentMedia("profile");
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setCurrentMedia("video");
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.muted = false;
+        setIsMuted(false);
+        videoRef.current.play().catch((err) => {
+          console.warn("Video replay error:", err);
         });
-    }
+      }
+    }, 30000); // 30 seconds
   };
 
-  const handleOpenVideoModal = () => {
-    if (audioRef.current && !audioRef.current.paused) {
-      audioRef.current.pause();
-      setIsPlayingAudio(false);
-    }
-    setShowVideoModal(true);
-  };
-
-  const handleCloseVideoModal = () => {
-    if (modalVideoRef.current) {
-      modalVideoRef.current.pause();
-    }
-    setShowVideoModal(false);
-  };
-
-  // 3D Entrance Animation: Glides smoothly inside on load
+  // 3D Entrance Animation & Audio Autoplay setup
   useEffect(() => {
     if (avatarWrapperRef.current) {
       gsap.fromTo(
         avatarWrapperRef.current,
         {
-          scale: 1.6,
+          scale: 1.5,
           opacity: 0,
-          rotationY: -25,
-          rotationX: 15,
-          filter: "blur(12px) drop-shadow(0 0 50px rgba(0, 245, 255, 0.7))",
+          rotationY: -20,
+          rotationX: 12,
+          filter: "blur(12px) drop-shadow(0 0 45px rgba(0, 245, 255, 0.7))",
         },
         {
           scale: 1,
           opacity: 1,
           rotationY: 0,
           rotationX: 0,
-          filter: "blur(0px) drop-shadow(0 0 35px rgba(0, 245, 255, 0.25))",
-          duration: 1.6,
+          filter: "blur(0px) drop-shadow(0 0 30px rgba(0, 245, 255, 0.25))",
+          duration: 1.5,
           ease: "power3.out",
-          delay: 0.25,
+          delay: 0.2,
         }
       );
     }
 
-    if (ringsRef.current) {
-      gsap.fromTo(
-        ringsRef.current,
-        {
-          scale: 2.2,
-          opacity: 0,
-          rotation: -120,
-        },
-        {
-          scale: 1,
-          opacity: 1,
-          rotation: 0,
-          duration: 1.8,
-          ease: "expo.out",
-          delay: 0.1,
-        }
-      );
+    // Play video with audio
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.muted = false;
+      videoRef.current
+        .play()
+        .then(() => {
+          setIsMuted(false);
+        })
+        .catch(() => {
+          // If browser restricts unmuted autoplay before user interaction, start muted
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            setIsMuted(true);
+            videoRef.current.play().catch(() => {});
+          }
+        });
     }
+
+    // Unmute on first user click/touch anywhere on the page
+    const unlockAudio = () => {
+      if (videoRef.current) {
+        videoRef.current.muted = false;
+        setIsMuted(false);
+      }
+    };
+
+    window.addEventListener("click", unlockAudio, { once: true });
+    window.addEventListener("touchstart", unlockAudio, { once: true });
+    window.addEventListener("keydown", unlockAudio, { once: true });
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      window.removeEventListener("click", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+    };
   }, []);
 
   // Interactive 3D tilt tracking with mouse movement
@@ -132,6 +132,25 @@ function Hero({ profile }) {
 
   const handleMouseLeave = () => {
     setMousePos({ x: 0, y: 0 });
+  };
+
+  const toggleMute = (e) => {
+    e?.stopPropagation();
+    if (!videoRef.current) return;
+    const nextMuted = !videoRef.current.muted;
+    videoRef.current.muted = nextMuted;
+    setIsMuted(nextMuted);
+  };
+
+  const replayVideoNow = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setCurrentMedia("video");
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.muted = false;
+      setIsMuted(false);
+      videoRef.current.play().catch(() => {});
+    }
   };
 
   const scrollToContact = () => {
@@ -246,83 +265,53 @@ function Hero({ profile }) {
           </p>
 
           {/* Action Buttons */}
-          <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginTop: "8px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginTop: "8px", alignItems: "center" }}>
             <button
               onClick={scrollToContact}
               className="btn-primary btn-submit-glow"
               id="hero-contact-btn"
-              style={{ padding: "14px 28px", fontSize: "0.95rem" }}
+              style={{ padding: "14px 32px", fontSize: "0.95rem" }}
             >
               <span>Contact Me</span>
               <ArrowRight size={16} />
-            </button>
-
-            {/* Voice Intro Greeting Audio Button */}
-            <button
-              onClick={toggleAudio}
-              className="btn-secondary"
-              style={{
-                padding: "14px 24px",
-                fontSize: "0.95rem",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "10px",
-                borderColor: isPlayingAudio ? "#00f5ff" : "rgba(0, 245, 255, 0.35)",
-                background: isPlayingAudio ? "rgba(0, 245, 255, 0.12)" : "rgba(3, 7, 18, 0.6)",
-                boxShadow: isPlayingAudio ? "0 0 20px rgba(0, 245, 255, 0.35)" : "none",
-                color: "#fff",
-                transition: "all 0.3s ease",
-              }}
-              title="Click to play/pause voice greeting"
-            >
-              {isPlayingAudio ? (
-                <>
-                  <Volume2 size={18} color="#00f5ff" />
-                  <span style={{ color: "#00f5ff", fontWeight: 600 }}>Pause Voice</span>
-                  <div style={{ display: "flex", gap: "3px", alignItems: "flex-end", height: "14px" }}>
-                    <span className="sound-bar bar-1" />
-                    <span className="sound-bar bar-2" />
-                    <span className="sound-bar bar-3" />
-                    <span className="sound-bar bar-4" />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Volume2 size={18} color="#38bdf8" />
-                  <span>Voice Intro 🔊</span>
-                </>
-              )}
-            </button>
-
-            {/* Watch 3D Video Intro Button */}
-            <button
-              onClick={handleOpenVideoModal}
-              className="btn-secondary"
-              style={{
-                padding: "14px 22px",
-                fontSize: "0.95rem",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                borderColor: "rgba(56, 189, 248, 0.4)",
-                color: "#38bdf8",
-              }}
-              title="Watch 3D animated intro with audio"
-            >
-              <Play size={15} fill="#38bdf8" />
-              <span>3D Intro Video</span>
             </button>
 
             {resumeLink !== "#" && (
               <button
                 onClick={() => downloadFile(resumeLink, "Sukirthan_Resume.pdf")}
                 className="btn-secondary"
-                style={{ padding: "14px 24px", fontSize: "0.95rem", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
+                style={{
+                  padding: "14px 32px",
+                  fontSize: "0.95rem",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
               >
                 <Download size={16} />
-                <span>Resume</span>
+                <span>Download Resume</span>
+              </button>
+            )}
+
+            {currentMedia === "profile" && (
+              <button
+                onClick={replayVideoNow}
+                className="btn-secondary"
+                style={{
+                  padding: "14px 22px",
+                  fontSize: "0.95rem",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  borderColor: "rgba(0, 245, 255, 0.4)",
+                  color: "#00f5ff",
+                }}
+                title="Play 3D video again now"
+              >
+                <Volume2 size={16} />
+                <span>Replay Video 🔊</span>
               </button>
             )}
           </div>
@@ -343,7 +332,7 @@ function Hero({ profile }) {
           </div>
         </div>
 
-        {/* Right Side: Profile Image with 3D Animated Rings */}
+        {/* Right Side: Clean 3D Avatar (Video -> Profile Image -> 30s Loop) */}
         <div
           ref={avatarContainerRef}
           onMouseMove={handleMouseMove}
@@ -353,75 +342,11 @@ function Hero({ profile }) {
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
-            height: "var(--ring-size, 500px)",
             perspective: "1200px",
           }}
           className="hero-image-side"
         >
-          {/* Animated Cosmic Rings Group */}
-          <div
-            ref={ringsRef}
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              pointerEvents: "none",
-            }}
-          >
-            {/* Outer orbit ring */}
-            <div
-              style={{
-                position: "absolute",
-                width: "var(--ring-size, 500px)",
-                height: "var(--ring-size, 500px)",
-                borderRadius: "50%",
-                border: "1.5px solid rgba(0, 245, 255, 0.16)",
-                boxShadow: "0 0 25px rgba(0, 245, 255, 0.08) inset",
-                animation: "spin-counterclockwise 25s linear infinite",
-              }}
-            />
-
-            {/* Dashed middle ring */}
-            <div
-              style={{
-                position: "absolute",
-                width: "calc(var(--ring-size, 500px) * 0.85)",
-                height: "calc(var(--ring-size, 500px) * 0.85)",
-                borderRadius: "50%",
-                border: "1.5px dashed rgba(56, 189, 248, 0.28)",
-                animation: "spin-clockwise 18s linear infinite",
-              }}
-            />
-
-            {/* Orbiting celestial beacon */}
-            <div
-              style={{
-                position: "absolute",
-                width: "var(--ring-size, 500px)",
-                height: "var(--ring-size, 500px)",
-                borderRadius: "50%",
-                animation: "spin-clockwise 8s linear infinite",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "6px",
-                  left: "50%",
-                  width: "12px",
-                  height: "12px",
-                  borderRadius: "50%",
-                  background: "#00f5ff",
-                  boxShadow: "0 0 14px #00f5ff, 0 0 28px rgba(0,245,255,0.6)",
-                  transform: "translateX(-50%)",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* 3D Profile Image Wrapper with Dynamic Tilt & Floating Animation */}
+          {/* 3D Profile Avatar Wrapper with Dynamic Tilt & Float */}
           <div
             ref={avatarWrapperRef}
             className="avatar-3d-interactive"
@@ -433,36 +358,71 @@ function Hero({ profile }) {
               zIndex: 3,
             }}
           >
-            {/* Circular Shell with Dark & Light Blue Neon Borders */}
+            {/* Clean Circular Shell with Dark & Light Blue Neon Borders (No outer rings!) */}
             <div
               style={{
-                width: "var(--avatar-size, 320px)",
-                height: "var(--avatar-size, 320px)",
+                width: "var(--avatar-size, 340px)",
+                height: "var(--avatar-size, 340px)",
                 borderRadius: "50%",
                 padding: "5px",
                 background: "linear-gradient(135deg, #00f5ff 0%, #38bdf8 50%, #1d4ed8 100%)",
                 boxShadow:
-                  "0 0 50px rgba(0, 245, 255, 0.35), 0 0 90px rgba(56, 189, 248, 0.25)",
+                  "0 0 45px rgba(0, 245, 255, 0.4), 0 0 85px rgba(56, 189, 248, 0.25)",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 position: "relative",
                 overflow: "hidden",
+                cursor: "pointer",
               }}
               className="profile-avatar-container"
+              onClick={() => {
+                if (videoRef.current && isMuted) {
+                  videoRef.current.muted = false;
+                  setIsMuted(false);
+                }
+              }}
+              title={isMuted ? "Click to unmute audio" : name}
             >
-              {/* Profile Image */}
-              <img
-                src={profileImage}
-                alt={name}
+              {/* 3D Animated Character Video */}
+              <video
+                ref={videoRef}
+                src="/profile-3d.mp4"
+                playsInline
+                onEnded={handleVideoEnded}
                 style={{
+                  position: "absolute",
+                  inset: 0,
                   width: "100%",
                   height: "100%",
                   borderRadius: "50%",
                   objectFit: "cover",
                   border: "4px solid #030712",
                   background: "#030712",
-                  display: "block",
+                  opacity: currentMedia === "video" ? 1 : 0,
+                  pointerEvents: currentMedia === "video" ? "auto" : "none",
+                  transition: "opacity 0.7s ease-in-out",
+                  zIndex: currentMedia === "video" ? 2 : 1,
+                }}
+              />
+
+              {/* Profile Image (Displays when video finishes, stays for 30s) */}
+              <img
+                src={profileImage}
+                alt={name}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "4px solid #030712",
+                  background: "#030712",
+                  opacity: currentMedia === "profile" ? 1 : 0,
+                  pointerEvents: currentMedia === "profile" ? "auto" : "none",
+                  transition: "opacity 0.7s ease-in-out",
+                  zIndex: currentMedia === "profile" ? 2 : 1,
                 }}
               />
 
@@ -475,241 +435,47 @@ function Hero({ profile }) {
                   background:
                     "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%, rgba(0,245,255,0.08) 100%)",
                   pointerEvents: "none",
+                  zIndex: 3,
                 }}
               />
-            </div>
 
-            {/* Quick Interactive Audio & 3D Video Floating Badges */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "-20px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                display: "flex",
-                gap: "8px",
-                zIndex: 10,
-                whiteSpace: "nowrap",
-              }}
-            >
-              <button
-                onClick={toggleAudio}
-                style={{
-                  background: isPlayingAudio
-                    ? "linear-gradient(135deg, #00f5ff, #38bdf8)"
-                    : "rgba(3, 7, 18, 0.9)",
-                  color: isPlayingAudio ? "#030712" : "#00f5ff",
-                  border: "1.5px solid rgba(0, 245, 255, 0.6)",
-                  borderRadius: "9999px",
-                  padding: "7px 14px",
-                  fontSize: "0.8rem",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  backdropFilter: "blur(12px)",
-                  boxShadow: "0 4px 18px rgba(0, 245, 255, 0.3)",
-                  transition: "all 0.25s ease",
-                }}
-                title="Toggle voice intro sound"
-              >
-                {isPlayingAudio ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                <span>{isPlayingAudio ? "Mute Voice" : "Voice 🔊"}</span>
-              </button>
-
-              <button
-                onClick={handleOpenVideoModal}
-                style={{
-                  background: "rgba(3, 7, 18, 0.9)",
-                  color: "#38bdf8",
-                  border: "1.5px solid rgba(56, 189, 248, 0.5)",
-                  borderRadius: "9999px",
-                  padding: "7px 14px",
-                  fontSize: "0.8rem",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  backdropFilter: "blur(12px)",
-                  boxShadow: "0 4px 14px rgba(56, 189, 248, 0.2)",
-                  transition: "all 0.25s ease",
-                }}
-                title="Watch 3D animated video"
-              >
-                <Play size={13} fill="#38bdf8" />
-                <span>3D Video</span>
-              </button>
+              {/* Discreet Mute/Unmute toggle indicator (sound controls) */}
+              {currentMedia === "video" && (
+                <button
+                  onClick={toggleMute}
+                  style={{
+                    position: "absolute",
+                    bottom: "16px",
+                    background: "rgba(3, 7, 18, 0.8)",
+                    backdropFilter: "blur(8px)",
+                    border: "1px solid rgba(0, 245, 255, 0.4)",
+                    borderRadius: "9999px",
+                    padding: "5px 12px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    color: isMuted ? "#94a3b8" : "#00f5ff",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    zIndex: 4,
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    transition: "all 0.2s ease",
+                  }}
+                  title={isMuted ? "Click to enable audio" : "Audio playing"}
+                >
+                  {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                  <span>{isMuted ? "Unmute" : "Sound On"}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Hidden Audio Element for High Fidelity Voice Intro */}
-      <audio
-        ref={audioRef}
-        src="/intro-audio.m4a"
-        preload="auto"
-        onEnded={() => setIsPlayingAudio(false)}
-      />
-
-      {/* Interactive 3D Animated Video Modal (With Unmuted Sound) */}
-      {showVideoModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(3, 7, 18, 0.88)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-          }}
-          onClick={handleCloseVideoModal}
-        >
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              maxWidth: "520px",
-              background: "linear-gradient(145deg, #071529 0%, #030712 100%)",
-              border: "1.5px solid rgba(0, 245, 255, 0.4)",
-              borderRadius: "24px",
-              boxShadow: "0 0 60px rgba(0, 245, 255, 0.3), 0 25px 50px rgba(0, 0, 0, 0.8)",
-              overflow: "hidden",
-              padding: "24px",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "16px",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Sparkles size={18} color="#00f5ff" />
-                <h3
-                  style={{
-                    margin: 0,
-                    fontSize: "1.15rem",
-                    fontWeight: 700,
-                    color: "#fff",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  3D Animated Intro & Voice
-                </h3>
-              </div>
-              <button
-                onClick={handleCloseVideoModal}
-                style={{
-                  background: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(0, 245, 255, 0.2)",
-                  borderRadius: "50%",
-                  width: "34px",
-                  height: "34px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#94a3b8",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-                title="Close modal"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Video Player With Audio */}
-            <div
-              style={{
-                borderRadius: "16px",
-                overflow: "hidden",
-                border: "1px solid rgba(0, 245, 255, 0.25)",
-                background: "#000",
-                position: "relative",
-              }}
-            >
-              <video
-                ref={modalVideoRef}
-                src="/profile-3d.mp4"
-                controls
-                autoPlay
-                playsInline
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  maxHeight: "65vh",
-                  display: "block",
-                  borderRadius: "16px",
-                }}
-              />
-            </div>
-
-            {/* Modal Footer */}
-            <div
-              style={{
-                marginTop: "16px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: "12px",
-                flexWrap: "wrap",
-              }}
-            >
-              <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8" }}>
-                🔊 Sound is enabled. Use the video volume slider if needed.
-              </p>
-              <button
-                onClick={handleCloseVideoModal}
-                className="btn-primary"
-                style={{ padding: "8px 22px", fontSize: "0.85rem" }}
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <style>{`
         :root {
-          --avatar-size: 320px;
-          --ring-size: 460px;
-        }
-
-        .sound-bar {
-          display: inline-block;
-          width: 3px;
-          background: #00f5ff;
-          border-radius: 2px;
-        }
-        .bar-1 { height: 6px; animation: sound-bounce 0.8s ease-in-out infinite alternate; }
-        .bar-2 { height: 14px; animation: sound-bounce 0.6s ease-in-out infinite alternate 0.15s; }
-        .bar-3 { height: 10px; animation: sound-bounce 0.7s ease-in-out infinite alternate 0.3s; }
-        .bar-4 { height: 5px; animation: sound-bounce 0.5s ease-in-out infinite alternate 0.1s; }
-
-        @keyframes sound-bounce {
-          0% { height: 3px; }
-          100% { height: 14px; }
-        }
-
-        @keyframes spin-clockwise {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spin-counterclockwise {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(-360deg); }
+          --avatar-size: 340px;
         }
 
         .avatar-3d-interactive {
@@ -750,7 +516,7 @@ function Hero({ profile }) {
         }
 
         @media (max-width: 1024px) {
-          :root { --avatar-size: 260px; --ring-size: 360px; }
+          :root { --avatar-size: 280px; }
         }
         @media (max-width: 900px) {
           .hero-grid {
@@ -763,7 +529,7 @@ function Hero({ profile }) {
           .hero-text-side > div { justify-content: center !important; }
         }
         @media (max-width: 480px) {
-          :root { --avatar-size: 210px; --ring-size: 280px; }
+          :root { --avatar-size: 240px; }
         }
       `}</style>
     </section>
