@@ -228,6 +228,17 @@ function Home() {
       camera.position.z += (targetZ - camera.position.z) * 0.04;
       camera.lookAt(scene.position);
 
+      // Smooth 3D Web Content Parallax with Cursor (Layout alignment preserved)
+      const tiltX = -mouseRef.current.y * 4.2;
+      const tiltY = mouseRef.current.x * 4.2;
+      const shiftX = mouseRef.current.x * 6;
+      const shiftY = -mouseRef.current.y * 5;
+
+      document.documentElement.style.setProperty("--cursor-tilt-x", `${tiltX.toFixed(2)}deg`);
+      document.documentElement.style.setProperty("--cursor-tilt-y", `${tiltY.toFixed(2)}deg`);
+      document.documentElement.style.setProperty("--cursor-shift-x", `${shiftX.toFixed(2)}px`);
+      document.documentElement.style.setProperty("--cursor-shift-y", `${shiftY.toFixed(2)}px`);
+
       renderer.render(scene, camera);
     };
     animate();
