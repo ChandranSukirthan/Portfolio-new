@@ -35,27 +35,74 @@ function Hero({ profile }) {
   const ringsRef = useRef(null);
   const videoRef = useRef(null);
   const timerRef = useRef(null);
+  const timerStartTimeRef = useRef(0);
+  const remainingTimeRef = useRef(120000);
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [currentMedia, setCurrentMedia] = useState("video"); // "video" | "profile"
 
-  // Video finished -> Automatically show profile picture, then replay video with audio repeatedly
+  const TWO_MINUTES_MS = 2 * 60 * 1000; // 2 minutes (120,000 ms)
+
+  // Switch to video and play with audio
+  const playVideoWithAudio = () => {
+    setCurrentMedia("video");
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.volume = 1.0;
+      videoRef.current.muted = false;
+      videoRef.current.play().catch((err) => {
+        console.warn("Video replay error:", err);
+      });
+    }
+  };
+
+  // Start/resume the 2-minute timer to display profile picture
+  const startProfileTimer = (durationMs = TWO_MINUTES_MS) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerStartTimeRef.current = Date.now();
+    remainingTimeRef.current = durationMs;
+
+    timerRef.current = setTimeout(() => {
+      playVideoWithAudio();
+    }, durationMs);
+  };
+
+  // Video finished -> Automatically show profile picture for 2 minutes, then replay video with audio
   const handleVideoEnded = () => {
     setCurrentMedia("profile");
-
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setCurrentMedia("video");
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.volume = 1.0;
-        videoRef.current.muted = false;
-        videoRef.current.play().catch((err) => {
-          console.warn("Video replay error:", err);
-        });
-      }
-    }, 4000); // Brief 4s interval displaying the profile picture
+    startProfileTimer(TWO_MINUTES_MS);
   };
+
+  // Page Visibility handler: Only play video/audio and count down when user is actively in the page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // User switched tabs or left page: pause video/audio and freeze timer
+        if (videoRef.current && !videoRef.current.paused) {
+          videoRef.current.pause();
+        }
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          const elapsed = Date.now() - timerStartTimeRef.current;
+          remainingTimeRef.current = Math.max(0, remainingTimeRef.current - elapsed);
+        }
+      } else {
+        // User returned to the page: resume video or resume 2-minute timer
+        if (currentMedia === "video") {
+          if (videoRef.current && videoRef.current.paused) {
+            videoRef.current.volume = 1.0;
+            videoRef.current.muted = false;
+            videoRef.current.play().catch(() => {});
+          }
+        } else if (currentMedia === "profile") {
+          startProfileTimer(remainingTimeRef.current > 0 ? remainingTimeRef.current : TWO_MINUTES_MS);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [currentMedia]);
 
   // 3D Entrance Animation & Auto Play with Audio
   useEffect(() => {
