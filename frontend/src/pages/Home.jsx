@@ -270,6 +270,25 @@ function Home() {
     return () => clearTimeout(timer);
   }, [loading]);
 
+  // 3D mouse-tilt on all cards
+  useEffect(() => {
+    if (loading) return;
+    const timer = setTimeout(async () => {
+      const { applyTilt } = await import('../utils/tilt3d.js');
+      const cleanups = [];
+      document.querySelectorAll(
+        '.glass-panel, .project-card-wrap, .flip-card, .achievement-card, .education-item, .contact-col'
+      ).forEach(el => {
+        el.style.transition = 'transform 0.18s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.3s ease';
+        el.style.willChange = 'transform';
+        el.style.transformStyle = 'preserve-3d';
+        cleanups.push(applyTilt(el, { max: 8, scale: 1.025 }));
+      });
+      return () => cleanups.forEach(fn => fn && fn());
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   useEffect(() => {
     loadPublicData();
     initCustomCursor();

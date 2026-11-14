@@ -239,7 +239,7 @@ function Contact({ contactInfo }) {
         {/* Header */}
         <div ref={headerRef} style={{ textAlign: "center", marginBottom: "60px" }}>
           <SectionBadge text="Let's Connect" />
-          <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>
+          <h2 className="section-title-3d" style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>
             Get In{" "}
             <span
               style={{

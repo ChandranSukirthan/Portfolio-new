@@ -1138,3 +1138,230 @@ section {
   .section-panel-content { padding-top: 60px; }
   .solar-admin-btn { bottom: 16px; right: 16px; padding: 8px 14px 8px 12px; font-size: 0.7rem; }
 }
+
+
+/* ============================================================
+   3D HOLOGRAPHIC & DEPTH ENHANCEMENTS
+   ============================================================ */
+
+/* ── Tilt glare overlay on cards ─────────────────────────────── */
+.glass-panel,
+.project-card-wrap,
+.flip-card-front,
+.achievement-card,
+.education-item,
+.contact-col {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::after,
+.project-card-wrap::after,
+.achievement-card::after,
+.education-item::after,
+.contact-col::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--tilt-glare-x, 50%) var(--tilt-glare-y, 50%),
+    rgba(0, 245, 255, 0.11) 0%,
+    rgba(56, 189, 248, 0.07) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.tilt-glare-active.glass-panel::after,
+.tilt-glare-active.project-card-wrap::after,
+.tilt-glare-active.achievement-card::after,
+.tilt-glare-active.education-item::after,
+.tilt-glare-active.contact-col::after {
+  opacity: 1;
+}
+
+/* ── Neon scan line sweep on section headers ─────────────────── */
+@keyframes scan-sweep {
+  0%   { transform: translateX(-110%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(110%); opacity: 0; }
+}
+
+.section-title-3d {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.section-title-3d::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 245, 255, 0.18) 45%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(56, 189, 248, 0.18) 55%,
+    transparent 100%
+  );
+  animation: scan-sweep 4s ease-in-out infinite;
+  animation-delay: 1s;
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+/* ── Holographic border shimmer on hovered glass panels ──────── */
+@keyframes border-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.glass-panel:hover {
+  --border-shimmer: 1;
+}
+
+/* ── 3D Depth layering — section divider neon lines ─────────── */
+section + section {
+  position: relative;
+}
+
+section + section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 245, 255, 0.15) 20%,
+    rgba(56, 189, 248, 0.25) 50%,
+    rgba(0, 245, 255, 0.15) 80%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── 3D depth glow on timeline connector dots ────────────────── */
+.timeline-item::before {
+  box-shadow:
+    0 0 0 3px rgba(0, 245, 255, 0.08),
+    0 0 12px rgba(56, 189, 248, 0.4),
+    0 0 28px rgba(0, 245, 255, 0.2) !important;
+}
+
+.timeline-item:hover::before {
+  box-shadow:
+    0 0 0 4px rgba(0, 245, 255, 0.15),
+    0 0 20px rgba(0, 245, 255, 0.5),
+    0 0 45px rgba(56, 189, 248, 0.35) !important;
+}
+
+/* ── Neon grid background on Skills section ──────────────────── */
+#skills {
+  background-image:
+    linear-gradient(rgba(0, 245, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.025) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
+}
+
+/* ── Holo shimmer on flip card front icons ───────────────────── */
+.flip-card-front svg,
+.flip-card-front img {
+  filter: drop-shadow(0 0 8px rgba(0, 245, 255, 0.4)) drop-shadow(0 0 20px rgba(56, 189, 248, 0.2));
+  transition: filter 0.35s ease;
+}
+
+.flip-card:hover .flip-card-front svg,
+.flip-card:hover .flip-card-front img {
+  filter: drop-shadow(0 0 14px rgba(0, 245, 255, 0.7)) drop-shadow(0 0 35px rgba(56, 189, 248, 0.4));
+}
+
+/* ── 3D text depth on main heading ──────────────────────────── */
+h1 {
+  text-shadow: 
+    0 1px 0 rgba(0, 245, 255, 0.1),
+    0 2px 0 rgba(0, 245, 255, 0.07),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Project card 3D depth shadow on hover ───────────────────── */
+.project-card-wrap:hover {
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(0, 245, 255, 0.2),
+    0 0 40px rgba(0, 245, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ── Section badge 3D glow pulse ─────────────────────────────── */
+.section-badge {
+  animation: badge-pulse 3s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0);
+    border-color: rgba(0, 245, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(0, 245, 255, 0.2), 0 0 32px rgba(0, 245, 255, 0.08);
+    border-color: rgba(0, 245, 255, 0.45);
+  }
+}
+
+/* ── Skill progress bar animated glow ───────────────────────── */
+.skill-bar-fill {
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.5), 0 0 20px rgba(56, 189, 248, 0.3) !important;
+}
+
+/* ── Contact form input 3D depth focus ──────────────────────── */
+.float-input:focus {
+  box-shadow:
+    0 0 0 2px rgba(0, 245, 255, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(0, 245, 255, 0.08),
+    inset 0 1px 0 rgba(0, 245, 255, 0.06) !important;
+  transform: translateZ(4px);
+}
+
+/* ── Achievement cards 3D neon border on hover ──────────────── */
+.achievement-card:hover {
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 245, 255, 0.25),
+    0 0 30px rgba(0, 245, 255, 0.1) !important;
+}
+
+/* ── Navbar 3D glass depth ───────────────────────────────────── */
+.nav-container {
+  box-shadow: 0 1px 0 rgba(0, 245, 255, 0.07), 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ── Filter tags 3D pop on active ───────────────────────────── */
+.filter-tag.active {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 16px rgba(0, 245, 255, 0.2), 0 0 0 1px rgba(0, 245, 255, 0.3) !important;
+}
+
+/* ── Scrollbar neon glow ─────────────────────────────────────── */
+::-webkit-scrollbar-thumb {
+  box-shadow: 0 0 8px rgba(0, 245, 255, 0.4);
+}
+
+/* ── Mobile: disable tilt-heavy effects ─────────────────────── */
+@media (max-width: 768px) {
+  #skills { background-image: none; }
+  .section-title-3d::after { animation: none; }
+  h1 { text-shadow: none; }
+}

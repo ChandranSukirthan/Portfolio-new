@@ -17,7 +17,7 @@ function Education({ educationList }) {
         {/* Header Section */}
         <div style={{ textAlign: "center", marginBottom: "60px" }}>
           <SectionBadge text="Academic Background"/>
-          <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>Education</h2>
+          <h2 className="section-title-3d" style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>Education</h2>
           <p style={{ color: "#21daeb", fontSize: "1.05rem", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
             My academic qualifications and achievements
           </p>

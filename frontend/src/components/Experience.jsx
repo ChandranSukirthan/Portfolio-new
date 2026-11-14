@@ -28,7 +28,7 @@ function Experience({ experience = [] }) {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "60px" }}>
           <SectionBadge text="Career Journey" />
-          <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>
+          <h2 className="section-title-3d" style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>
             Work Experience
           </h2>
           <p

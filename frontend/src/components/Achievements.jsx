@@ -18,7 +18,7 @@ function Achievements({ achievements }) {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "60px" }}>
           <SectionBadge text="Accomplishments" />
-          <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>Achievements</h2>
+          <h2 className="section-title-3d" style={{ fontSize: "2.5rem", fontWeight: 800, color: "#fff" }}>Achievements</h2>
           <p style={{ color: "#94a3b8", fontSize: "1.05rem", marginTop: "10px" }}>
             Certifications, awards, and professional milestones
           </p>
