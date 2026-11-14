@@ -3,7 +3,8 @@ import API, { getBackendBase } from "../api/api";
 import Navbar from "../components/Navbar";
 import { 
   User, Mail, FileText, Globe, 
-  CheckCircle2, AlertCircle, Save, ArrowLeft, Upload, Edit3, Lock 
+  CheckCircle2, AlertCircle, Save, ArrowLeft, Upload, Edit3, Lock,
+  Eye, EyeOff
 } from "lucide-react";
 
 // Zero-dependency SVG components to handle Lucide brand icon omission
@@ -46,6 +47,8 @@ function ManageProfile() {
 
   // Password Change state
   const [passwords, setPasswords] = useState({ currentPassword: "", newPassword: "" });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [pwdLoading, setPwdLoading] = useState(false);
   const [pwdError, setPwdError] = useState("");
   const [pwdSuccess, setPwdSuccess] = useState("");
@@ -432,14 +435,34 @@ function ManageProfile() {
                 <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
                   <Lock size={16} style={{ position: "absolute", left: "12px", color: "#64748b" }} />
                   <input
-                    type="password"
+                    type={showCurrentPassword ? "text" : "password"}
                     required
                     value={passwords.currentPassword}
                     onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
                     className="input-field"
-                    style={{ width: "100%", paddingLeft: "38px" }}
+                    style={{ width: "100%", paddingLeft: "38px", paddingRight: "40px" }}
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    title={showCurrentPassword ? "Hide password" : "Show password"}
+                    aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      background: "transparent",
+                      border: "none",
+                      color: showCurrentPassword ? "#00f5ff" : "#64748b",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "4px",
+                    }}
+                  >
+                    {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
 
@@ -448,14 +471,34 @@ function ManageProfile() {
                 <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
                   <Lock size={16} style={{ position: "absolute", left: "12px", color: "#64748b" }} />
                   <input
-                    type="password"
+                    type={showNewPassword ? "text" : "password"}
                     required
                     value={passwords.newPassword}
                     onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
                     className="input-field"
-                    style={{ width: "100%", paddingLeft: "38px" }}
+                    style={{ width: "100%", paddingLeft: "38px", paddingRight: "40px" }}
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    title={showNewPassword ? "Hide password" : "Show password"}
+                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      background: "transparent",
+                      border: "none",
+                      color: showNewPassword ? "#00f5ff" : "#64748b",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "4px",
+                    }}
+                  >
+                    {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
             </div>

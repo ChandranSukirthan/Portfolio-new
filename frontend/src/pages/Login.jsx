@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/api";
-import { Shield, Mail, Lock, LogIn, UserPlus, ArrowLeft } from "lucide-react";
+import { Shield, Mail, Lock, LogIn, UserPlus, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -183,14 +184,40 @@ function Login() {
                 color: "#64748b"
               }} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
-                style={{ width: "100%", paddingLeft: "42px" }}
+                style={{ width: "100%", paddingLeft: "42px", paddingRight: "44px" }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  background: "transparent",
+                  border: "none",
+                  color: showPassword ? "#00f5ff" : "#64748b",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "4px",
+                  borderRadius: "6px",
+                  transition: "color 0.2s ease, transform 0.15s ease",
+                }}
+              >
+                {showPassword ? (
+                  <EyeOff style={{ width: "18px", height: "18px" }} />
+                ) : (
+                  <Eye style={{ width: "18px", height: "18px" }} />
+                )}
+              </button>
             </div>
           </div>
 
