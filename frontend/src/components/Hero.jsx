@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, Download, Play } from "lucide-react";
 import { getBackendBase } from "../api/api";
 import { downloadFile } from "../utils/download";
 import { gsap } from "gsap";
@@ -34,77 +34,49 @@ function Hero({ profile }) {
   const avatarWrapperRef = useRef(null);
   const ringsRef = useRef(null);
   const videoRef = useRef(null);
-  const timerRef = useRef(null);
-  const timerStartTimeRef = useRef(0);
-  const remainingTimeRef = useRef(120000);
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [currentMedia, setCurrentMedia] = useState("video"); // "video" | "profile"
+  const [currentMedia, setCurrentMedia] = useState("profile"); // Initially shows user's profile picture!
 
-  const TWO_MINUTES_MS = 2 * 60 * 1000; // 2 minutes (120,000 ms)
-
-  // Switch to video and play with audio
-  const playVideoWithAudio = () => {
-    setCurrentMedia("video");
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.volume = 1.0;
-      videoRef.current.muted = false;
-      videoRef.current.play().catch((err) => {
-        console.warn("Video replay error:", err);
-      });
+  // Only when user clicks my profile, play video and audio with 100% synchronization
+  const handleAvatarClick = () => {
+    if (currentMedia === "profile") {
+      setCurrentMedia("video");
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.volume = 1.0;
+        videoRef.current.muted = false;
+        videoRef.current.play().catch((err) => {
+          console.warn("Video play error on click:", err);
+        });
+      }
+    } else {
+      // If already playing video, clicking pauses and returns to profile picture
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+      setCurrentMedia("profile");
     }
   };
 
-  // Start/resume the 2-minute timer to display profile picture
-  const startProfileTimer = (durationMs = TWO_MINUTES_MS) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerStartTimeRef.current = Date.now();
-    remainingTimeRef.current = durationMs;
-
-    timerRef.current = setTimeout(() => {
-      playVideoWithAudio();
-    }, durationMs);
-  };
-
-  // Video finished -> Automatically show profile picture for 2 minutes, then replay video with audio
+  // When video completes, seamlessly return to showing the profile picture
   const handleVideoEnded = () => {
     setCurrentMedia("profile");
-    startProfileTimer(TWO_MINUTES_MS);
   };
 
-  // Page Visibility handler: Only play video/audio and count down when user is actively in the page
+  // Pause video if user switches away from the tab
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // User switched tabs or left page: pause video/audio and freeze timer
-        if (videoRef.current && !videoRef.current.paused) {
-          videoRef.current.pause();
-        }
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-          const elapsed = Date.now() - timerStartTimeRef.current;
-          remainingTimeRef.current = Math.max(0, remainingTimeRef.current - elapsed);
-        }
-      } else {
-        // User returned to the page: resume video or resume 2-minute timer
-        if (currentMedia === "video") {
-          if (videoRef.current && videoRef.current.paused) {
-            videoRef.current.volume = 1.0;
-            videoRef.current.muted = false;
-            videoRef.current.play().catch(() => {});
-          }
-        } else if (currentMedia === "profile") {
-          startProfileTimer(remainingTimeRef.current > 0 ? remainingTimeRef.current : TWO_MINUTES_MS);
-        }
+      if (document.hidden && videoRef.current && !videoRef.current.paused) {
+        videoRef.current.pause();
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [currentMedia]);
+  }, []);
 
-  // 3D Entrance Animation & Auto Play with Audio
+  // 3D Entrance Animation
   useEffect(() => {
     // 3D entrance for Avatar
     if (avatarWrapperRef.current) {
@@ -149,42 +121,6 @@ function Hero({ profile }) {
         }
       );
     }
-
-    // Auto-play video with audio
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.volume = 1.0;
-      videoRef.current.muted = false;
-      videoRef.current
-        .play()
-        .catch(() => {
-          // If browser restricts unmuted autoplay before user interaction, start playing muted
-          if (videoRef.current) {
-            videoRef.current.muted = true;
-            videoRef.current.play().catch(() => {});
-          }
-        });
-    }
-
-    // Unmute immediately on ANY first user interaction across the page
-    const unlockAudio = () => {
-      if (videoRef.current) {
-        videoRef.current.muted = false;
-        videoRef.current.volume = 1.0;
-      }
-    };
-
-    const events = ["click", "touchstart", "pointerdown", "keydown", "wheel", "mousemove"];
-    events.forEach((evt) => {
-      window.addEventListener(evt, unlockAudio, { once: true, passive: true });
-    });
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      events.forEach((evt) => {
-        window.removeEventListener(evt, unlockAudio);
-      });
-    };
   }, []);
 
   // Interactive 3D tilt tracking with mouse movement
@@ -440,11 +376,13 @@ function Hero({ profile }) {
               }}
               className="profile-avatar-container"
               onClick={handleAvatarClick}
+              title={currentMedia === "profile" ? "Click to play 3D animated video with sound" : "Click to return to profile photo"}
             >
-              {/* 3D Animated Character Video (Plays with audio automatically) */}
+              {/* 3D Animated Character Video (Plays with audio on click) */}
               <video
                 ref={videoRef}
                 src="/profile-3d.mp4"
+                preload="auto"
                 playsInline
                 onEnded={handleVideoEnded}
                 style={{
@@ -458,12 +396,12 @@ function Hero({ profile }) {
                   background: "#030712",
                   opacity: currentMedia === "video" ? 1 : 0,
                   pointerEvents: currentMedia === "video" ? "auto" : "none",
-                  transition: "opacity 0.7s ease-in-out",
+                  transition: "opacity 0.6s ease-in-out",
                   zIndex: currentMedia === "video" ? 2 : 1,
                 }}
               />
 
-              {/* Profile Image (Displays when video finishes, then switches back repeatedly) */}
+              {/* Profile Image (Shown by default on page load) */}
               <img
                 src={profileImage}
                 alt={name}
@@ -478,12 +416,12 @@ function Hero({ profile }) {
                   background: "#030712",
                   opacity: currentMedia === "profile" ? 1 : 0,
                   pointerEvents: currentMedia === "profile" ? "auto" : "none",
-                  transition: "opacity 0.7s ease-in-out",
+                  transition: "opacity 0.6s ease-in-out",
                   zIndex: currentMedia === "profile" ? 2 : 1,
                 }}
               />
 
-              {/* Subtle glass reflection overlay (Clean avatar, no text buttons) */}
+              {/* Subtle glass reflection overlay */}
               <div
                 style={{
                   position: "absolute",
@@ -495,6 +433,44 @@ function Hero({ profile }) {
                   zIndex: 3,
                 }}
               />
+
+              {/* Subtle hover play hint when in profile picture mode */}
+              {currentMedia === "profile" && (
+                <div
+                  className="avatar-play-hint"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: "50%",
+                    background: "rgba(3, 7, 18, 0.45)",
+                    backdropFilter: "blur(2px)",
+                    WebkitBackdropFilter: "blur(2px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0,
+                    transition: "opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
+                    zIndex: 4,
+                    pointerEvents: "none",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "56px",
+                      height: "56px",
+                      borderRadius: "50%",
+                      background: "rgba(0, 245, 255, 0.2)",
+                      border: "1.5px solid #00f5ff",
+                      boxShadow: "0 0 25px rgba(0, 245, 255, 0.6)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Play size={24} fill="#00f5ff" color="#00f5ff" style={{ marginLeft: "3px" }} />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -503,6 +479,10 @@ function Hero({ profile }) {
       <style>{`
         :root {
           --avatar-size: 320px;
+        }
+
+        .profile-avatar-container:hover .avatar-play-hint {
+          opacity: 1 !important;
         }
 
         @keyframes spin-clockwise {
