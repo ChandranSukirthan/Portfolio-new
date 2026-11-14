@@ -65,6 +65,7 @@ function SkillCard({ categoryKey, skills, cardIndex, expanded, onToggle }) {
   return (
     <div
       ref={cardRef}
+      className="glass-panel"
       style={{
         background: "rgba(8,11,18,0.95)",
         border: "1px solid rgba(255,255,255,0.07)",

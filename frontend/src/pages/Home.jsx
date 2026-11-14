@@ -59,12 +59,12 @@ function Home() {
     rendererRef.current = renderer;
 
     // ── Particle starfield (space background) ────────────────
-    const particleCount = 600;
+    const particleCount = 700;
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
     for (let i = 0; i < particleCount; i++) {
-      const radius = 2.8 + Math.random() * 3.5;
+      const radius = 2.8 + Math.random() * 4.0;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -84,14 +84,42 @@ function Home() {
     pGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     const pMat = new THREE.PointsMaterial({
-      size: 0.022,
+      size: 0.024,
       vertexColors: true,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.78,
       sizeAttenuation: true,
     });
     const particles = new THREE.Points(pGeo, pMat);
     scene.add(particles);
+
+    // ── Floating Stardust Layer (Real 3D Cosmic Depth) ────────
+    const dustCount = 80;
+    const dPositions = new Float32Array(dustCount * 3);
+    const dColors = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount; i++) {
+      const r = 2.0 + Math.random() * 4.2;
+      const t = Math.random() * Math.PI * 2;
+      const p = Math.acos(2 * Math.random() - 1);
+      dPositions[i * 3] = r * Math.sin(p) * Math.cos(t);
+      dPositions[i * 3 + 1] = r * Math.sin(p) * Math.sin(t);
+      dPositions[i * 3 + 2] = r * Math.cos(p);
+      dColors[i * 3] = 0.0;
+      dColors[i * 3 + 1] = 0.96;
+      dColors[i * 3 + 2] = 1.0;
+    }
+    const dGeo = new THREE.BufferGeometry();
+    dGeo.setAttribute("position", new THREE.BufferAttribute(dPositions, 3));
+    dGeo.setAttribute("color", new THREE.BufferAttribute(dColors, 3));
+    const dMat = new THREE.PointsMaterial({
+      size: 0.05,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85,
+      sizeAttenuation: true,
+    });
+    const cosmicDust = new THREE.Points(dGeo, dMat);
+    scene.add(cosmicDust);
 
     // ── GSAP Camera Drift On Load ────────────────────────────
     camera.position.set(0, 0, 9);
@@ -101,12 +129,14 @@ function Home() {
       ease: "power3.out",
     });
 
-    // ── Mouse Parallax ───────────────────────────────────────
+    // ── Mouse Parallax Across Real 3D Space ──────────────────
     const handleMouseMove = (e) => {
-      mouseRef.current.x = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouseRef.current.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+      const normX = (e.clientX / window.innerWidth - 0.5) * 2;
+      const normY = -(e.clientY / window.innerHeight - 0.5) * 2;
+      mouseRef.current.x = normX;
+      mouseRef.current.y = normY;
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     // ── Resize Handler ────────────────────────────────────────
     const handleResize = () => {
@@ -125,8 +155,11 @@ function Home() {
       particles.rotation.y += 0.0006;
       particles.rotation.x += 0.0002;
 
-      camera.position.x += (mouseRef.current.x * 0.8 - camera.position.x) * 0.04;
-      camera.position.y += (mouseRef.current.y * 0.5 - camera.position.y) * 0.04;
+      cosmicDust.rotation.y -= 0.0004;
+      cosmicDust.rotation.z += 0.0002;
+
+      camera.position.x += (mouseRef.current.x * 0.9 - camera.position.x) * 0.04;
+      camera.position.y += (mouseRef.current.y * 0.6 - camera.position.y) * 0.04;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);

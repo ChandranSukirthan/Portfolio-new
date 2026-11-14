@@ -255,6 +255,84 @@ button, [role="button"] { cursor: none; }
 .float-up { animation: float-up 0.7s var(--ease-out-expo) forwards; }
 
 /* ============================================================
+   REAL 3D SPACE FLOATING ANIMATIONS FOR ALL CONTENT & CARDS
+   Weightless 3D space movement like floating in zero gravity
+   ============================================================ */
+@keyframes real-space-float-1 {
+  0% {
+    transform: perspective(1000px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(1000px) translate3d(0, -9px, 12px) rotateX(1.8deg) rotateY(-1.2deg);
+  }
+  100% {
+    transform: perspective(1000px) translate3d(0, 4px, 4px) rotateX(-1deg) rotateY(1.4deg);
+  }
+}
+
+@keyframes real-space-float-2 {
+  0% {
+    transform: perspective(1000px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(1000px) translate3d(0, 7px, 10px) rotateX(-1.5deg) rotateY(1.6deg);
+  }
+  100% {
+    transform: perspective(1000px) translate3d(0, -5px, 3px) rotateX(1.2deg) rotateY(-1deg);
+  }
+}
+
+@keyframes real-space-float-3 {
+  0% {
+    transform: perspective(1000px) translate3d(0, 0, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: perspective(1000px) translate3d(0, -7px, 14px) rotateZ(0.6deg);
+  }
+  100% {
+    transform: perspective(1000px) translate3d(0, 4px, 2px) rotateZ(-0.6deg);
+  }
+}
+
+/* Subtle continuous floating in 3D space for cards across all sections */
+.glass-panel,
+.timeline-item > .glass-panel,
+.project-card-wrap,
+.contact-col,
+.skill-card-inner,
+.education-item,
+.achievement-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+}
+
+/* Alternating gentle space float across elements */
+.timeline-item:nth-child(odd) > .glass-panel,
+.project-grid > div:nth-child(odd),
+.contact-col:first-child,
+.achievements-grid > div:nth-child(odd) {
+  animation: real-space-float-1 7s ease-in-out infinite alternate;
+}
+
+.timeline-item:nth-child(even) > .glass-panel,
+.project-grid > div:nth-child(even),
+.contact-col:last-child,
+.achievements-grid > div:nth-child(even) {
+  animation: real-space-float-2 8.5s ease-in-out infinite alternate;
+}
+
+/* Interactive hover enhancement */
+.glass-panel:hover,
+.project-card-wrap:hover,
+.contact-col:hover {
+  animation-play-state: paused;
+  transform: perspective(1000px) translateY(-8px) translateZ(16px) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 35px rgba(0, 245, 255, 0.22) !important;
+  border-color: rgba(0, 245, 255, 0.45) !important;
+}
+
+/* ============================================================
    TIMELINE (Experience / Education)
    ============================================================ */
 .timeline-container {
