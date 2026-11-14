@@ -30,7 +30,6 @@ function Home() {
   const rendererRef = useRef(null);
   const frameRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });
-  const contentLayerRef = useRef(null);
 
   useEffect(() => {
     if (loading) return;
@@ -290,63 +289,6 @@ function Home() {
     return () => clearTimeout(timer);
   }, [loading]);
 
-  // ── Smooth content parallax moving together with cursor ──────
-  useEffect(() => {
-    if (loading) return;
-    if (window.matchMedia("(hover: none)").matches) return;
-
-    let targetX = 0;
-    let targetY = 0;
-    let targetRotY = 0;
-    let targetRotX = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let currentRotY = 0;
-    let currentRotX = 0;
-    let rafId = null;
-
-    const handleMouseMove = (e) => {
-      // Normalized between -1 and +1
-      const normX = (e.clientX / window.innerWidth - 0.5) * 2;
-      const normY = (e.clientY / window.innerHeight - 0.5) * 2;
-
-      // When cursor moves right (+normX), content moves smoothly together
-      // Range: ±18px horizontally, ±10px vertically, subtle 3D tilt
-      targetX = normX * 18;
-      targetY = normY * 10;
-      targetRotY = normX * 1.2;
-      targetRotX = -normY * 0.8;
-    };
-
-    const handleMouseLeave = () => {
-      targetX = 0;
-      targetY = 0;
-      targetRotY = 0;
-      targetRotX = 0;
-    };
-
-    const updateLoop = () => {
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
-
-      if (contentLayerRef.current) {
-        contentLayerRef.current.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
-      }
-
-      rafId = requestAnimationFrame(updateLoop);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    document.addEventListener("mouseleave", handleMouseLeave);
-    rafId = requestAnimationFrame(updateLoop);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [loading]);
-
   useEffect(() => {
     loadPublicData();
     initCustomCursor();
@@ -560,92 +502,80 @@ function Home() {
       />
       <Navbar />
 
-      {/* 3D Cursor Parallax Content Layer: content moves smoothly together with cursor */}
-      <div
-        ref={contentLayerRef}
+      {/* 1. HERO */}
+      <Hero profile={profile} />
+
+      {/* 2. EDUCATION */}
+      <Education educationList={educationList} />
+
+      {/* 3. EXPERIENCE */}
+      <Experience experience={experience} />
+
+      {/* 4. PROJECTS */}
+      <Projects projects={projects} />
+
+      {/* 5. SKILLS */}
+      <Skills skills={skills} />
+
+      {/* 6. ACHIEVEMENTS */}
+      <Achievements achievements={achievements} />
+
+      {/* 7. CONTACT */}
+      <Contact contactInfo={contactInfo} />
+
+      {/* FOOTER */}
+      <footer
         style={{
+          padding: "40px 5%",
+          borderTop: "1px solid rgba(0,245,255,0.08)",
+          background: "#000000",
+          textAlign: "center",
+          fontSize: "0.85rem",
+          color: "#374151",
           position: "relative",
-          width: "100%",
-          margin: "0 auto",
-          zIndex: 1,
-          willChange: "transform",
+          overflow: "hidden",
         }}
       >
-        {/* 1. HERO */}
-        <Hero profile={profile} />
-
-        {/* 2. EDUCATION */}
-        <Education educationList={educationList} />
-
-        {/* 3. EXPERIENCE */}
-        <Experience experience={experience} />
-
-        {/* 4. PROJECTS */}
-        <Projects projects={projects} />
-
-        {/* 5. SKILLS */}
-        <Skills skills={skills} />
-
-        {/* 6. ACHIEVEMENTS */}
-        <Achievements achievements={achievements} />
-
-        {/* 7. CONTACT */}
-        <Contact contactInfo={contactInfo} />
-
-        {/* FOOTER */}
-        <footer
+        {/* Footer neon line */}
+        <div
           style={{
-            padding: "40px 5%",
-            borderTop: "1px solid rgba(0,245,255,0.08)",
-            background: "#000000",
-            textAlign: "center",
-            fontSize: "0.85rem",
-            color: "#374151",
-            position: "relative",
-            overflow: "hidden",
+            position: "absolute",
+            top: 0,
+            left: "15%",
+            right: "15%",
+            height: "1px",
+            background:
+              "linear-gradient(90deg, transparent, rgba(0,245,255,0.25), rgba(56,189,248,0.2), transparent)",
+          }}
+        />
+        <div
+          style={{
+            maxWidth: "1100px",
+            margin: "0 auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "20px",
           }}
         >
-          {/* Footer neon line */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "15%",
-              right: "15%",
-              height: "1px",
-              background:
-                "linear-gradient(90deg, transparent, rgba(0,245,255,0.25), rgba(56,189,248,0.2), transparent)",
-            }}
-          />
-          <div
-            style={{
-              maxWidth: "1100px",
-              margin: "0 auto",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "20px",
-            }}
-          >
-            <span>
-              © {new Date().getFullYear()}{" "}
-              <span
-                style={{
-                  background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  fontWeight: 700,
-                }}
-              >
-                {profile?.name || "Sukirthan Chandrakumar"}
-              </span>
-              . All rights reserved.
+          <span>
+            © {new Date().getFullYear()}{" "}
+            <span
+              style={{
+                background: "linear-gradient(90deg, #00f5ff, #38bdf8)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                fontWeight: 700,
+              }}
+            >
+              {profile?.name || "Sukirthan Chandrakumar"}
             </span>
-          </div>
-        </footer>
-      </div>
+            . All rights reserved.
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }
