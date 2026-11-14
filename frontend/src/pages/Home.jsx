@@ -251,6 +251,37 @@ function Home() {
     };
   }, []);
 
+  // ── 3D Space Receding Scroll Animation ───────────────────────
+  // When scrolling past each section, it physically moves backward/behind into 3D cosmic space
+  useEffect(() => {
+    if (loading) return;
+
+    const timer = setTimeout(() => {
+      const sections = document.querySelectorAll("section");
+      sections.forEach((sec) => {
+        gsap.to(sec, {
+          scrollTrigger: {
+            trigger: sec,
+            start: "bottom 92%",
+            end: "bottom 15%",
+            scrub: 0.8,
+          },
+          scale: 0.88,
+          z: -300,
+          rotateX: 7,
+          opacity: 0.28,
+          filter: "blur(3px)",
+          transformOrigin: "center top",
+          transformPerspective: 1200,
+          ease: "power2.inOut",
+        });
+      });
+      ScrollTrigger.refresh();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   const loadPublicData = async () => {
     setLoading(true);
     try {
@@ -437,6 +468,8 @@ function Home() {
         background: "#000000",
         position: "relative",
         overflowX: "hidden",
+        perspective: "1200px",
+        transformStyle: "preserve-3d",
       }}
     >
       {/* Global Three.js Canvas in Background */}
