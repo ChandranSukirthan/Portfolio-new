@@ -1,0 +1,133 @@
+name: CI/CD Pipeline
+
+'on':
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+# Cancel previous runs on the same branch/PR when a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================
+  # 1. FRONTEND CI (Build & Validate Vite React App)
+  # ============================================================
+  frontend-build:
+    name: 🎨 Frontend CI (Build & Validate)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js (20.x)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Install Frontend Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
+      - name: 🚀 Build Frontend Production Bundle
+        working-directory: ./frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.example.com/api' }}
+        run: |
+          npm run build
+
+      - name: 📤 Archive Frontend Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
+
+  # ============================================================
+  # 2. BACKEND CI (Build & Validate Next.js API Server)
+  # ============================================================
+  backend-build:
+    name: ⚙️ Backend CI (Build & Validate)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js (20.x)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: 📦 Install Backend Dependencies
+        working-directory: ./backend
+        run: |
+          npm ci || npm install
+
+      - name: 🚀 Build Backend Next.js Application
+        working-directory: ./backend
+        env:
+          NODE_ENV: production
+          MONGO_URI: ${{ secrets.MONGO_URI || 'mongodb://127.0.0.1:27017/portfolio_ci' }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci_jwt_secret_test_key_12345' }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME || 'test_cloud' }}
+          CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET || 'test_preset' }}
+        run: |
+          npm run build
+
+  # ============================================================
+  # 3. PIPELINE SUMMARY & DEPLOYMENT TRACKING
+  # ============================================================
+  pipeline-status:
+    name: 📊 Pipeline Status & Deployment Tracking
+    needs: [frontend-build, backend-build]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 📋 Generate CI/CD Summary Report
+        run: |
+          STATUS="${{ contains(needs.*.result, 'failure') && 'FAILED ❌' || 'PASSED ✅' }}"
+          echo "### 🚀 CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎨 Frontend Build | ${{ needs.frontend-build.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⚙️ Backend Build | ${{ needs.backend-build.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Overall Status:** $STATUS" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch / Trigger:** \`${{ github.ref_name }}\` via \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🛑 Fail workflow if build failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "Pipeline failed! Please check the logs of the failed jobs above."
+          exit 1
+
+      # Optional automatic deployment via Vercel CLI when VERCEL_TOKEN secret is present
+      - name: 🌐 Deploy to Vercel (Production)
+        if: success() && github.ref == 'refs/heads/main' && github.event_name == 'push' && env.VERCEL_TOKEN != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          echo "Vercel credentials detected! Deploying production build..."
+          npx vercel --prod --token=$VERCEL_TOKEN --yes
